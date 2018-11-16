@@ -1,43 +1,48 @@
+## Metadata ##
 variable "environment" {
   description = ""
   default = "dev"
 }
 
+## Environment variables ##
 variable "resource_group_name" {
-  description = ""
+  description = "Name of RG the environment will run inside"
+}
+variable "resource_group_location" {
+  description = "Location of the RG the environment will run inside"
+  default = "West Europe"
 }
 
-## AKS and ACR variables ##
+## AKS variables ##
 variable "k8s_version" {
-  description = ""
+  description = "What version of k8s to request from provider"
   default = "1.11.2"
 }
-
 variable "cluster_name" {
-  description = ""
+  description = "What the k8s cluster should be identified as"
 }
-
 variable "dns_prefix" {
   description = ""
   default = "${var.cluster-name}-${var.environment}"
 }
-
 variable "agent_count" {
-  description = ""
+  description = "Number of agents in k8s"
   default = 2
 }
-
 variable "vm_size" {
-  description = ""
+  description = "Size of VMs in k8s cluster"
   default = "Standard_D4"
 }
-
 variable "addon_http_routing" {
   description = ""
   default = false
 }
-
 variable "admin_username" {
-  description = ""
+  description = "user name to add to VMs"
   default = "azureuser"
 }
+variable "ssh_public_key" {
+	description = "public key to add to admin_user in VMs""
+}
+
+

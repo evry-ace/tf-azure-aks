@@ -10,15 +10,6 @@ variable "client_secret" {
 variable "tenant_id" {
   description = ""
 }
-variable "location" {
-  description = ""
-  default = "West Europe"
-}
-
-variable "ssh_public_key" {
-  description = ""
-}
-
 provider "azurerm" {
   subscription_id = "${var.subscription_id}"
   client_id       = "${var.client_id}"
