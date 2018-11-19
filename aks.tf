@@ -5,7 +5,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   resource_group_name = "${var.resource_group_name}"
   dns_prefix          = "${var.dns_prefix}"
 
-  kubernetes_version  = "${var.k8s_version}"
+  kubernetes_version = "${var.k8s_version}"
 
   linux_profile {
     admin_username = "${var.admin_username}"
@@ -24,14 +24,14 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   }
 
   service_principal {
-    client_id       = "${var.client_id}"
-    client_secret   = "${var.client_secret}"
+    client_id     = "${var.client_id}"
+    client_secret = "${var.client_secret}"
   }
 
   addon_profile {
     # https://docs.microsoft.com/en-us/azure/aks/http-application-routing
     http_application_routing {
-      enabled       = "${var.addon_http_routing}"
+      enabled = "${var.addon_http_routing}"
     }
   }
 
@@ -43,7 +43,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
 ## Outputs ##
 
 output "kube_config" {
-  value = "${azurerm_kubernetes_cluster.k8s_cluster.kube_config_raw}"
+  value     = "${azurerm_kubernetes_cluster.k8s_cluster.kube_config_raw}"
   sensitive = true
 }
 
