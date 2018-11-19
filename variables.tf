@@ -26,7 +26,7 @@ variable "cluster_name" {
 
 variable "dns_prefix" {
   description = ""
-  default     = "${var.cluster-name}-${var.environment}"
+#  default     = "${var.cluster-name}-${var.environment}"
 }
 
 variable "agent_count" {
