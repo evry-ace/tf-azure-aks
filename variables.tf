@@ -42,7 +42,15 @@ variable "admin_username" {
 	default = "azureuser"
 }
 variable "ssh_public_key" {
-	description = "public key to add to admin_user in VMs""
+	description = "public key to add to admin_user in VMs"
 }
+variable "client_id" {
+	description = "azure client id"
+}
+variable "client_secret" {
+	description = "azure client secret"
+}
+
+
 
 
