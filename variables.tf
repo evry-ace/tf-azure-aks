@@ -36,7 +36,7 @@ variable "agent_count" {
 
 variable "vm_size" {
   description = "Size of VMs in k8s cluster"
-  default     = "Standard_D4"
+  default     = "Standard_D4_v3"
 }
 
 variable "addon_http_routing" {
