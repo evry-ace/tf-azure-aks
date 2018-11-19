@@ -17,7 +17,7 @@ variable "resource_group_location" {
 ## AKS variables ##
 variable "k8s_version" {
   description = "What version of k8s to request from provider"
-  default     = "1.11.2"
+  default     = "1.11.4"
 }
 
 variable "cluster_name" {
