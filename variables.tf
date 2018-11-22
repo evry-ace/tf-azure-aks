@@ -60,15 +60,15 @@ variable "client_secret" {
 }
 
 ## RBAC variables ##
-variable "client_app_id" {
+variable "rbac_client_app_id" {
 	description = "The Client ID of an Azure Active Directory Application"
 }
-variable "server_app_id" {
+variable "rbac_server_app_id" {
 	description = "The Server ID of an Azure Active Directory Application"
 }
-variable "server_app_secret" {
+variable "rbac_server_app_secret" {
 	description = "The Client Secret of an Azure Active Directory Application"
 }
-#variable "tenant_id" {
+#variable "rbac_tenant_id" {
 #	description = "The Tenant ID used for Azure Active Directory Application. If this isn't specified the Tenant ID of the current Subscription is used"
 #}

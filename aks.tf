@@ -41,10 +41,10 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   
   role_based_access_control {
     azure_active_directory {
-      client_app_id = "${var.client_app_id}"
-      server_app_id = "${var.server_app_id}"
-      server_app_secret = "${var.server_app_secret}"
-      #use current subscription .. tenant_id = ""
+      client_app_id = "${var.rbac_client_app_id}"
+      server_app_id = "${var.rbac_server_app_id}"
+      server_app_secret = "${var.rbac_server_app_secret}"
+      #use current subscription .. tenant_id = "${var.rbac_tenant_id}"
     }
   }
 }
