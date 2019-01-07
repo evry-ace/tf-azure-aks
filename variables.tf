@@ -26,7 +26,8 @@ variable "cluster_name" {
 
 variable "dns_prefix" {
   description = ""
-#  default     = "${var.cluster-name}-${var.environment}"
+
+  #  default     = "${var.cluster-name}-${var.environment}"
 }
 
 variable "agent_count" {
@@ -50,25 +51,36 @@ variable "admin_username" {
 }
 
 variable "ssh_public_key" {
-	description = "public key to add to admin_user in VMs"
+  description = "public key to add to admin_user in VMs"
 }
+
 variable "client_id" {
-	description = "azure client id"
+  description = "azure client id"
 }
+
 variable "client_secret" {
-	description = "azure client secret"
+  description = "azure client secret"
 }
 
 ## RBAC variables ##
+variable "rbac_enable" {
+  description = "Should RBAC be enabled."
+  default     = true
+}
+
 variable "rbac_client_app_id" {
-	description = "The Client ID of an Azure Active Directory Application"
+  description = "The Client ID of an Azure Active Directory Application"
 }
+
 variable "rbac_server_app_id" {
-	description = "The Server ID of an Azure Active Directory Application"
+  description = "The Server ID of an Azure Active Directory Application"
 }
+
 variable "rbac_server_app_secret" {
-	description = "The Client Secret of an Azure Active Directory Application"
+  description = "The Client Secret of an Azure Active Directory Application"
 }
+
 #variable "rbac_tenant_id" {
 #	description = "The Tenant ID used for Azure Active Directory Application. If this isn't specified the Tenant ID of the current Subscription is used"
 #}
+
