@@ -16,7 +16,7 @@ node('jenkins-docker-3') {
       isMaster = env.BRANCH_NAME == 'master'
 
       def tflintImage = 'wata727/tflint:latest'
-      def tflintArgs = [].join(' ')
+      def tflintArgs = ["--entrypoint=''"].join(' ')
 
       stage("Terraform Lint") {
         docker.image(tflintImage).inside(tflintArgs) {
