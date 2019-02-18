@@ -40,11 +40,6 @@ variable "vm_size" {
   default     = "Standard_D4_v3"
 }
 
-variable "addon_http_routing" {
-  description = ""
-  default     = false
-}
-
 variable "admin_username" {
   description = "user name to add to VMs"
   default     = "azureuser"
