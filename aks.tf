@@ -28,13 +28,6 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     client_secret = "${var.client_secret}"
   }
 
-  addon_profile {
-    # https://docs.microsoft.com/en-us/azure/aks/http-application-routing
-    http_application_routing {
-      enabled = "${var.addon_http_routing}"
-    }
-  }
-
   tags {
     Environment = "${var.environment}"
   }
