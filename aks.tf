@@ -45,6 +45,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   }
 
   network_profile {
+    network_plugin = "${var.aks_network_plugin}"
     pod_cidr = "${var.aks_pod_cidr}"
     service_cidr = "${var.aks_service_cidr}"
     dns_service_ip = "${var.aks_dns_service_ip}"
