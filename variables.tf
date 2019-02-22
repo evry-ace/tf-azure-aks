@@ -80,7 +80,7 @@ variable "rbac_server_app_secret" {
 #}
 
 variable "aks_network_plugin" {
-  default = "azure"
+  default = "kubenet"
 }
 
 variable "aks_pod_cidr" {
