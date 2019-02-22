@@ -91,6 +91,10 @@ variable "aks_service_cidr" {
   default = "10.0.0.0/16"
 }
 
+variable "aks_docker_bridge_cidr" {
+  default = "172.26.0.1/16"
+}
+
 variable "aks_dns_service_ip" {
   default = "10.0.0.10"
 }
