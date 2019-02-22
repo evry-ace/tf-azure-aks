@@ -79,6 +79,10 @@ variable "rbac_server_app_secret" {
 #	description = "The Tenant ID used for Azure Active Directory Application. If this isn't specified the Tenant ID of the current Subscription is used"
 #}
 
+variable "aks_network_plugin" {
+  default = "azure"
+}
+
 variable "aks_pod_cidr" {
   default = "10.244.0.0/16"
 }
