@@ -7,7 +7,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
 
   kubernetes_version = "${var.k8s_version}"
 
-  vnet_subnet_id = "${var.vnet_subnet_id}"
+  vnet_subnet_id = "${var.aks_vnet_subnet_id}"
   
   linux_profile {
     admin_username = "${var.admin_username}"
