@@ -7,6 +7,8 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
 
   kubernetes_version = "${var.k8s_version}"
 
+  vnet_subnet_id = "${var.vnet_subnet_id}"
+  
   linux_profile {
     admin_username = "${var.admin_username}"
 
@@ -43,7 +45,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
       #use current subscription .. tenant_id = "${var.rbac_tenant_id}"
     }
   }
-
+  
   network_profile {
     network_plugin = "${var.aks_network_plugin}"
     pod_cidr = "${var.aks_pod_cidr}"
