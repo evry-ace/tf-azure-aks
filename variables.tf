@@ -98,3 +98,11 @@ variable "aks_docker_bridge_cidr" {
 variable "aks_dns_service_ip" {
   default = "10.0.0.10"
 }
+
+variable "aks_vnet_subnet_id" {
+  default = ""
+}
+
+variable "aks_vnet_subnet_cidr" {
+  default = "10.200.0.0/24"
+}
