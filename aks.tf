@@ -1,16 +1,17 @@
-## AKS kubernetes cluster ##
 resource "azurerm_virtual_network" "k8s_agent_network" {
-  name = ""
+  name = "agent-net"
+  location            = "${var.resource_group_location}"
   resource_group_name = "${var.resource_group_name}"
-  count = "${var.aks_vnet_subnet_id == "" ? 0 : 1}"
   address_space = ["${var.aks_vnet_subnet_cidr}"]
 }
 
 resource "azurerm_subnet" "k8s_agent_subnet" {
-  name = ""
+  name = "agent-subnet"
+  virtual_network_name = "${azurerm_virtual_network.k8s_agent_network.name}"
   resource_group_name = "${var.resource_group_name}"
-  count = "${var.aks_vnet_subnet_id == "" ? 0 : 1}"
-  address_prefix = ["${var.aks_vnet_subnet_cidr}"]
+# IF aks_vnet_subnet_id (NO Subnet is passed) CREATE this SUBNET ELSE DONT
+  count = "${var.aks_vnet_subnet_id == "" ? 1 : 0}"
+  address_prefix = "${var.aks_vnet_subnet_cidr}"
 }
 
 resource "azurerm_kubernetes_cluster" "k8s_cluster" {
@@ -30,13 +31,14 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     }
   }
 
+  #if No aks_vnet_subnet_id is passed THEN use newly created subnet id ELSE use PASSED subnet id
   agent_pool_profile {
     name            = "default"
     count           = "${var.agent_count}"
     vm_size         = "${var.vm_size}"
     os_type         = "Linux"
     os_disk_size_gb = 50
-    vnet_subnet_id = "${var.aks_vnet_subnet_id == "" ? azurerm_virtual_network.k8s_agent_network.id : var.aks_vnet_subnet_id}"
+    vnet_subnet_id = "${var.aks_vnet_subnet_id == "" ? azurerm_subnet.k8s_agent_subnet.id : var.aks_vnet_subnet_id}"
   }
 
   service_principal {
