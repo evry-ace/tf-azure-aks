@@ -22,7 +22,6 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     vm_size         = "${var.vm_size}"
     os_type         = "Linux"
     os_disk_size_gb = 50
-    vnet_subnet_id = "${var.aks_vnet_subnet_id}"
   }
 
   service_principal {
