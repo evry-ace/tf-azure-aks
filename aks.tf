@@ -1,16 +1,17 @@
 resource "azurerm_virtual_network" "k8s_agent_network" {
-  name = "agent-net"
+  name                = "agent-net"
   location            = "${var.resource_group_location}"
   resource_group_name = "${var.resource_group_name}"
-  address_space = ["${var.aks_vnet_subnet_cidr}"]
+  address_space       = ["${var.aks_vnet_subnet_cidr}"]
 }
 
 resource "azurerm_subnet" "k8s_agent_subnet" {
-  name = "agent-subnet"
+  name                 = "agent-subnet"
   virtual_network_name = "${azurerm_virtual_network.k8s_agent_network.name}"
-  resource_group_name = "${var.resource_group_name}"
-# IF aks_vnet_subnet_id (NO Subnet is passed) CREATE this SUBNET ELSE DONT
-  count = "${var.aks_vnet_subnet_id == "" ? 1 : 0}"
+  resource_group_name  = "${var.resource_group_name}"
+
+  # IF aks_vnet_subnet_id (NO Subnet is passed) CREATE this SUBNET ELSE DONT
+  count          = "${var.aks_vnet_subnet_id == "" ? 1 : 0}"
   address_prefix = "${var.aks_vnet_subnet_cidr}"
 }
 
@@ -22,7 +23,6 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
 
   kubernetes_version = "${var.k8s_version}"
 
-  
   linux_profile {
     admin_username = "${var.admin_username}"
 
@@ -38,7 +38,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     vm_size         = "${var.vm_size}"
     os_type         = "Linux"
     os_disk_size_gb = 50
-    vnet_subnet_id = "${var.aks_vnet_subnet_id == "" ? azurerm_subnet.k8s_agent_subnet.id : var.aks_vnet_subnet_id}"
+    vnet_subnet_id  = "${var.aks_vnet_subnet_id == "" ? azurerm_subnet.k8s_agent_subnet.id : var.aks_vnet_subnet_id}"
   }
 
   service_principal {
@@ -61,12 +61,12 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
       #use current subscription .. tenant_id = "${var.rbac_tenant_id}"
     }
   }
-  
+
   network_profile {
-    network_plugin = "${var.aks_network_plugin}"
-    pod_cidr = "${var.aks_pod_cidr}"
-    service_cidr = "${var.aks_service_cidr}"
-    dns_service_ip = "${var.aks_dns_service_ip}"
-    docker_bridge_cidr =  "${var.aks_docker_bridge_cidr}"
+    network_plugin     = "${var.aks_network_plugin}"
+    pod_cidr           = "${var.aks_pod_cidr}"
+    service_cidr       = "${var.aks_service_cidr}"
+    dns_service_ip     = "${var.aks_dns_service_ip}"
+    docker_bridge_cidr = "${var.aks_docker_bridge_cidr}"
   }
 }
