@@ -15,12 +15,12 @@ node('jenkins-docker-3') {
       // Check if this is the master brach
       isMaster = env.BRANCH_NAME == 'master'
 
-      def tflintImage = 'wata727/tflint:latest'
-      def tflintArgs = ["--entrypoint=''"].join(' ')
+      def tfImage = 'hashicorp/terraform:light'
+      def tfArgs = ["--entrypoint=''"].join(' ')
 
       stage("Terraform Lint") {
-        docker.image(tflintImage).inside(tflintArgs) {
-          sh 'tflint --error-with-issues'
+        docker.image(tfImage).inside(tfArgs) {
+          sh 'terraform fmt -check=True'
         }
       }
 
