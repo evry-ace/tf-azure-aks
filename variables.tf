@@ -106,3 +106,7 @@ variable "aks_vnet_subnet_id" {
 variable "aks_vnet_subnet_cidr" {
   default = "10.200.0.0/24"
 }
+
+variable "create_vnet" {
+  default = true
+}
