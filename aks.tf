@@ -4,7 +4,7 @@ resource "azurerm_virtual_network" "k8s_agent_network" {
   resource_group_name = "${var.resource_group_name}"
   address_space       = ["${var.aks_vnet_subnet_cidr}"]
 
-  count = "${var.create_vnet}"
+  count = "${var.create_vnet ? 1 : 0}"
 }
 
 resource "azurerm_subnet" "k8s_agent_subnet" {
@@ -13,7 +13,7 @@ resource "azurerm_subnet" "k8s_agent_subnet" {
   resource_group_name  = "${var.resource_group_name}"
 
   # IF aks_vnet_subnet_id (NO Subnet is passed) CREATE this SUBNET ELSE DONT
-  count          = "${var.create_vnet}"
+  count          = "${var.create_vnet ? 1 : 0}"
   address_prefix = "${var.aks_vnet_subnet_cidr}"
 }
 
@@ -40,7 +40,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     vm_size         = "${var.vm_size}"
     os_type         = "Linux"
     os_disk_size_gb = 50
-    vnet_subnet_id  = "${var.create_vnet ? azurerm_subnet.k8s_agent_subnet.id : var.aks_vnet_subnet_id}"
+    vnet_subnet_id  = "${var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, list("")), 0) : var.aks_vnet_subnet_id}"
   }
 
   service_principal {
