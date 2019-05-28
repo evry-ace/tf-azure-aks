@@ -26,7 +26,6 @@ variable "cluster_name" {
 
 variable "dns_prefix" {
   description = ""
-
   #  default     = "${var.cluster-name}-${var.environment}"
 }
 
@@ -110,3 +109,4 @@ variable "aks_vnet_subnet_cidr" {
 variable "create_vnet" {
   default = true
 }
+

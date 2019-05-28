@@ -1,26 +1,26 @@
 ## Outputs ##
 output "kube_config" {
-  value     = "${azurerm_kubernetes_cluster.k8s_cluster.kube_admin_config_raw}"
+  value     = azurerm_kubernetes_cluster.k8s_cluster.kube_admin_config_raw
   sensitive = true
 }
 
 output "kube_host" {
-  value     = "${azurerm_kubernetes_cluster.k8s_cluster.kube_admin_config.0.host}"
+  value     = azurerm_kubernetes_cluster.k8s_cluster.kube_admin_config[0].host
   sensitive = true
 }
 
 output "kube_client_key" {
-  value     = "${azurerm_kubernetes_cluster.k8s_cluster.kube_admin_config.0.client_key}"
+  value     = azurerm_kubernetes_cluster.k8s_cluster.kube_admin_config[0].client_key
   sensitive = true
 }
 
 output "kube_client_ca" {
-  value     = "${azurerm_kubernetes_cluster.k8s_cluster.kube_admin_config.0.client_certificate }"
+  value     = azurerm_kubernetes_cluster.k8s_cluster.kube_admin_config[0].client_certificate
   sensitive = true
 }
 
 output "kube_cluster_ca" {
-  value     = "${azurerm_kubernetes_cluster.k8s_cluster.kube_admin_config.0.cluster_ca_certificate }"
+  value     = azurerm_kubernetes_cluster.k8s_cluster.kube_admin_config[0].cluster_ca_certificate
   sensitive = true
 }
 
@@ -36,4 +36,6 @@ Test configuration using kubectl
 
 $ kubectl get nodes
 CONFIGURE
+
 }
+
