@@ -1,7 +1,7 @@
 ## Metadata ##
 variable "environment" {
   description = "A name for the environment"
-  default     = "dev"
+  default     = ""
 }
 
 ## Environment variables ##

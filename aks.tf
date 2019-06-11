@@ -1,3 +1,7 @@
+locals {
+  env = var.environment != "" ? var.environment : terraform.workspace
+}
+
 resource "azurerm_virtual_network" "k8s_agent_network" {
   name                = "agent-net"
   location            = var.resource_group_location
@@ -49,7 +53,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   }
 
   tags = {
-    Environment = var.environment
+    Environment = locals.env
   }
 
   role_based_access_control {
