@@ -110,3 +110,6 @@ variable "create_vnet" {
   default = true
 }
 
+variable "oms_workspace_id" {
+  description = "Operations Management Suite Workspace ID"
+}

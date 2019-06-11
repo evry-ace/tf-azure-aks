@@ -74,5 +74,12 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     dns_service_ip     = var.aks_dns_service_ip
     docker_bridge_cidr = var.aks_docker_bridge_cidr
   }
+
+  addon_profile {
+    oms_agent {
+      enabled                    = true
+      log_analytics_workspace_id = "${var.oms_workspace_id}"
+    }
+  }
 }
 
