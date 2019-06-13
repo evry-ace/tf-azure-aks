@@ -53,7 +53,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   }
 
   tags = {
-    Environment = locals.env
+    Environment = local.env
   }
 
   role_based_access_control {
