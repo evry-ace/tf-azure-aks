@@ -116,5 +116,5 @@ variable "oms_workspace_id" {
 
 variable "oms_agent_enable" {
   description = "Enable OMS Agent profile"
-  default     = True
+  default     = true
 }
