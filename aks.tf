@@ -76,10 +76,19 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   }
 
   addon_profile {
-    oms_agent {
-      enabled                    = var.oms_agent_enable
-      log_analytics_workspace_id = var.oms_workspace_id
+    dynamic "oms_agent" {
+      for_each = var.oms_agent_enable ? [1] : []
+
+      content {
+        oms_agent {
+          enabled                    = var.oms_agent_enable
+          log_analytics_workspace_id = var.oms_workspace_id
+        }
+      }
     }
   }
 }
 
+output "k8s_cluster" {
+  value = azurerm_kubernetes_cluster.k8s_cluster
+}
