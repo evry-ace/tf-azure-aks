@@ -80,10 +80,8 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
       for_each = var.oms_agent_enable ? [1] : []
 
       content {
-        oms_agent {
-          enabled                    = var.oms_agent_enable
-          log_analytics_workspace_id = var.oms_workspace_id
-        }
+        enabled                    = var.oms_agent_enable
+        log_analytics_workspace_id = var.oms_workspace_id
       }
     }
   }
