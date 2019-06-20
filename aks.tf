@@ -75,7 +75,10 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     docker_bridge_cidr = var.aks_docker_bridge_cidr
   }
 
-  addon_profile {
+  dynamic "addon_profile" {
+    for_each = var.oms_agent_enable ? [1] : []
+
+    content {
     dynamic "oms_agent" {
       for_each = var.oms_agent_enable ? [1] : []
 
@@ -83,6 +86,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
         enabled                    = var.oms_agent_enable
         log_analytics_workspace_id = var.oms_workspace_id
       }
+    }
     }
   }
 }
