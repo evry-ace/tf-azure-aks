@@ -24,6 +24,10 @@ variable "cluster_name" {
   description = "What the k8s cluster should be identified as"
 }
 
+variable "maze_vault" {
+  description = "What the k8s cluster should be identified as"
+}
+
 variable "dns_prefix" {
   description = ""
   #  default     = "${var.cluster-name}-${var.environment}"

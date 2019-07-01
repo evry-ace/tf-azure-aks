@@ -92,7 +92,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
 }
 
 resource "azurerm_key_vault" "vault" {
-  name                        = "mazevault"
+  name                        = var.maze_vault
   location                    = var.resource_group_location
   resource_group_name         = var.resource_group_name
   enabled_for_disk_encryption = true
