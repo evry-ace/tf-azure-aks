@@ -63,6 +63,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
       client_app_id     = var.rbac_client_app_id
       server_app_id     = var.rbac_server_app_id
       server_app_secret = var.rbac_server_app_secret
+      tenant_id         = var.rbac_tenant_id
       #use current subscription .. tenant_id = "${var.rbac_tenant_id}"
     }
   }
