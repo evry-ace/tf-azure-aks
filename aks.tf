@@ -79,15 +79,30 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     for_each = var.oms_agent_enable ? [1] : []
 
     content {
-    dynamic "oms_agent" {
-      for_each = var.oms_agent_enable ? [1] : []
+      dynamic "oms_agent" {
+        for_each = var.oms_agent_enable ? [1] : []
 
-      content {
-        enabled                    = var.oms_agent_enable
-        log_analytics_workspace_id = var.oms_workspace_id
+        content {
+          enabled                    = var.oms_agent_enable
+          log_analytics_workspace_id = var.oms_workspace_id
+        }
       }
     }
-    }
+  }
+}
+
+resource "azurerm_key_vault" "vault" {
+  name                        = "mazevault"
+  location                    = var.resource_group_location
+  resource_group_name         = var.resource_group_name
+  enabled_for_disk_encryption = true
+  tenant_id                   = var.tenant_id
+
+  sku_name = "standard"
+
+  network_acls {
+    default_action = "Deny"
+    bypass         = "AzureServices"
   }
 }
 

@@ -74,6 +74,10 @@ variable "rbac_server_app_secret" {
   description = "The Client Secret of an Azure Active Directory Application"
 }
 
+variable "tenant_id" {
+  description = "Azure Tenant ID"
+}
+
 #variable "rbac_tenant_id" {
 #	description = "The Tenant ID used for Azure Active Directory Application. If this isn't specified the Tenant ID of the current Subscription is used"
 #}
@@ -112,7 +116,7 @@ variable "create_vnet" {
 
 variable "oms_workspace_id" {
   description = "Operations Management Suite Workspace ID"
-  default = ""
+  default     = ""
 }
 
 variable "oms_agent_enable" {
