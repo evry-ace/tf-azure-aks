@@ -91,6 +91,21 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   }
 }
 
+resource "azurerm_key_vault" "vault" {
+  name                        = "mazevault"
+  location                    = var.resource_group_location
+  resource_group_name         = var.resource_group_name
+  enabled_for_disk_encryption = true
+  tenant_id                   = var.tenant_id
+
+  sku_name = "standard"
+
+  network_acls {
+    default_action = "Deny"
+    bypass         = "AzureServices"
+  }
+}
+
 output "k8s_cluster" {
   value = azurerm_kubernetes_cluster.k8s_cluster
 }
