@@ -24,10 +24,6 @@ variable "cluster_name" {
   description = "What the k8s cluster should be identified as"
 }
 
-variable "maze_vault" {
-  description = "What the k8s cluster should be identified as"
-}
-
 variable "dns_prefix" {
   description = ""
   #  default     = "${var.cluster-name}-${var.environment}"
@@ -76,10 +72,6 @@ variable "rbac_server_app_id" {
 
 variable "rbac_server_app_secret" {
   description = "The Client Secret of an Azure Active Directory Application"
-}
-
-variable "tenant_id" {
-  description = "Azure Tenant ID"
 }
 
 #variable "rbac_tenant_id" {
