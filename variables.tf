@@ -127,3 +127,7 @@ variable "oms_agent_enable" {
   description = "Enable OMS Agent profile"
   default     = true
 }
+
+variable "secret-store-csi-storage_name" {
+  description = "The name of the storage used for the CSI secrets"
+}
