@@ -131,3 +131,13 @@ variable "oms_agent_enable" {
 variable "secret-store-csi-storage_name" {
   description = "The name of the storage used for the CSI secrets"
 }
+
+variable "create_vault" {
+  description = "Should we create the vault"
+  default     = 0
+}
+
+variable "create_csi_storage_account" {
+  description = "Should we create the storage account"
+  default     = 0
+}

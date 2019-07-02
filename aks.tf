@@ -93,6 +93,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
 
 resource "azurerm_key_vault" "vault" {
   name                        = var.maze_vault
+  count                       = var.create_vault
   location                    = var.resource_group_location
   resource_group_name         = var.resource_group_name
   enabled_for_disk_encryption = true
@@ -110,6 +111,7 @@ resource "azurerm_key_vault" "vault" {
 
 resource "azurerm_storage_account" "secret-store-csi-storage" {
   name                     = var.secret-store-csi-storage_name
+  count                    = var.create_csi_storage_account
   resource_group_name      = var.resource_group_name
   location                 = var.resource_group_location
   account_tier             = "Standard"
