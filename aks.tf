@@ -108,6 +108,14 @@ resource "azurerm_key_vault" "vault" {
   }
 }
 
+resource "azurerm_storage_account" "secret-store-csi-storage" {
+  name                     = "secret-store-csi-storage"
+  resource_group_name      = var.resource_group_name
+  location                 = var.resource_group_location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+
 output "k8s_cluster" {
   value = azurerm_kubernetes_cluster.k8s_cluster
 }
