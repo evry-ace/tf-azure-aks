@@ -1,5 +1,16 @@
 locals {
   env = var.environment != "" ? var.environment : terraform.workspace
+
+  default_pool = {
+    name            = default
+    count           = var.agent_count
+    vm_size         = var.vm_size
+    os_type         = "Linux"
+    os_disk_size_gb = 100
+    vnet_subnet_id  = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, [""]), 0) : var.aks_vnet_subnet_id
+  }
+
+  node_pools = lenth(var.node_pools) == 0 ? [default_pool] : var.node_pools
 }
 
 resource "azurerm_virtual_network" "k8s_agent_network" {
@@ -38,13 +49,18 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   }
 
   #if No aks_vnet_subnet_id is passed THEN use newly created subnet id ELSE use PASSED subnet id
-  agent_pool_profile {
-    name            = "default"
-    count           = var.agent_count
-    vm_size         = var.vm_size
-    os_type         = "Linux"
-    os_disk_size_gb = 50
-    vnet_subnet_id  = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, [""]), 0) : var.aks_vnet_subnet_id
+  dynamic "agent_pool_profile" {
+    for_each = local.node_pools
+
+    content = {
+      name            = agent_pool_profile.value.name
+      count           = agent_pool_profile.value.count
+      vm_size         = agent_pool_profile.value.vm_size
+      os_type         = agent_pool_profile.value.os_type
+      os_disk_size_gb = agent_pool_profile.value.os_disk_size_gb
+      type            = agent_pool_profile.value.type
+      vnet_subnet_id  = agent_pool_profile.value.subnet_id
+    }
   }
 
   service_principal {
