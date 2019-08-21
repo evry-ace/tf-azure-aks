@@ -29,6 +29,11 @@ variable "dns_prefix" {
   #  default     = "${var.cluster-name}-${var.environment}"
 }
 
+variable "node_pools" {
+  description = "Node pools to use"
+  default     = []
+}
+
 variable "agent_count" {
   description = "Number of agents in k8s"
   default     = 2
