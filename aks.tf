@@ -30,6 +30,13 @@ resource "azurerm_subnet" "k8s_agent_subnet" {
   # IF aks_vnet_subnet_id (NO Subnet is passed) CREATE this SUBNET ELSE DONT
   count          = var.create_vnet ? 1 : 0
   address_prefix = var.aks_vnet_subnet_cidr
+
+  lifecycle {
+    ignore_changes = [
+      route_table_id,
+      network_security_group_id,
+    ]
+  }
 }
 
 resource "azurerm_kubernetes_cluster" "k8s_cluster" {
