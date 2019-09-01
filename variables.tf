@@ -32,6 +32,7 @@ variable "dns_prefix" {
 variable "node_pools" {
   description = "Node pools to use"
   default     = []
+  type        = list
 }
 
 variable "agent_count" {
@@ -82,6 +83,10 @@ variable "rbac_server_app_secret" {
 #variable "rbac_tenant_id" {
 #	description = "The Tenant ID used for Azure Active Directory Application. If this isn't specified the Tenant ID of the current Subscription is used"
 #}
+
+variable "load_balancer_sku" {
+  default = "basic"
+}
 
 variable "aks_network_plugin" {
   default = "kubenet"

@@ -2,15 +2,36 @@ locals {
   env = var.environment != "" ? var.environment : terraform.workspace
 
   default_pool = {
-    name            = "default"
-    count           = var.agent_count
-    vm_size         = var.vm_size
-    os_type         = "Linux"
-    os_disk_size_gb = 50
-    subnet_id       = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, [""]), 0) : var.aks_vnet_subnet_id
+    name                = "default"
+    count               = var.agent_count
+    vm_size             = var.vm_size
+    os_type             = "Linux"
+    os_disk_size_gb     = 50
+    subnet_id           = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, [""]), 0) : var.aks_vnet_subnet_id
+    type                = "AvailabilitySet"
+    enable_auto_scaling = false
+    min_count           = 3
+    max_count           = 6
+    availability_zones  = []
   }
 
-  node_pools = length(var.node_pools) == 0 ? [local.default_pool] : var.node_pools
+  // This is here to preserve the old way that this module works, should possibly be deprecated
+  pools = length(var.node_pools) == 0 ? toset([local.default_pool]) : toset(var.node_pools)
+
+  node_pools = [for p in local.pools : {
+    name               = p.name
+    count              = lookup(p, "count", local.default_pool.count)
+    vm_size            = lookup(p, "vm_size", local.default_pool.vm_size)
+    os_type            = lookup(p, "os_type", local.default_pool.os_type)
+    os_disk_size_gb    = lookup(p, "os_dize_size_gb", local.default_pool.os_disk_size_gb)
+    subnet_id          = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, [""]), 0) : var.aks_vnet_subnet_id
+    availability_zones = lookup(p, "availability_zones", local.default_pool.availability_zones)
+
+    type = p.type
+    # enable_auto_scaling = false
+    # min_count           = lookup(p, "min_count", local.default_pool.min_count)
+    # max_count           = lookup(p, "max_count", local.default_pool.max_count)
+  }]
 }
 
 resource "azurerm_virtual_network" "k8s_agent_network" {
@@ -55,18 +76,23 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     }
   }
 
+
   #if No aks_vnet_subnet_id is passed THEN use newly created subnet id ELSE use PASSED subnet id
   dynamic "agent_pool_profile" {
     for_each = local.node_pools
 
     content {
-      name            = agent_pool_profile.value.name
-      count           = agent_pool_profile.value.count
-      vm_size         = agent_pool_profile.value.vm_size
-      os_type         = agent_pool_profile.value.os_type
-      os_disk_size_gb = agent_pool_profile.value.os_disk_size_gb
-      # type            = agent_pool_profile.value.type
-      vnet_subnet_id = agent_pool_profile.value.subnet_id
+      name               = agent_pool_profile.value.name
+      count              = agent_pool_profile.value.count
+      vm_size            = agent_pool_profile.value.vm_size
+      os_type            = agent_pool_profile.value.os_type
+      os_disk_size_gb    = agent_pool_profile.value.os_disk_size_gb
+      vnet_subnet_id     = agent_pool_profile.value.subnet_id
+      availability_zones = agent_pool_profile.value.availability_zones
+      type               = agent_pool_profile.value.type
+      # enable_auto_scaling = agent_pool_profile.value.enable_auto_scaling
+      # min_count           = agent_pool_profile.value.min_count
+      # max_count           = agent_pool_profile.value.max_count
     }
   }
 
@@ -91,6 +117,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   }
 
   network_profile {
+    load_balancer_sku  = var.load_balancer_sku
     network_plugin     = var.aks_network_plugin
     pod_cidr           = var.aks_pod_cidr
     service_cidr       = var.aks_service_cidr
