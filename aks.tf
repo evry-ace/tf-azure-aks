@@ -3,11 +3,10 @@ locals {
 
   default_pool = {
     name                = "default"
-    count               = var.agent_count
-    vm_size             = var.vm_size
+    count               = 2
+    vm_size             = "Standard_D3_v2"
     os_type             = "Linux"
     os_disk_size_gb     = 50
-    subnet_id           = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, [""]), 0) : var.aks_vnet_subnet_id
     type                = "AvailabilitySet"
     enable_auto_scaling = false
     min_count           = 3
@@ -15,10 +14,7 @@ locals {
     availability_zones  = []
   }
 
-  // This is here to preserve the old way that this module works, should possibly be deprecated
-  pools = length(var.node_pools) == 0 ? toset([local.default_pool]) : toset(var.node_pools)
-
-  node_pools = [for p in local.pools : {
+  node_pools = [for p in var.node_pools : {
     name               = p.name
     count              = lookup(p, "count", local.default_pool.count)
     vm_size            = lookup(p, "vm_size", local.default_pool.vm_size)

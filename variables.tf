@@ -31,18 +31,10 @@ variable "dns_prefix" {
 
 variable "node_pools" {
   description = "Node pools to use"
-  default     = []
-  type        = list
-}
-
-variable "agent_count" {
-  description = "Number of agents in k8s"
-  default     = 2
-}
-
-variable "vm_size" {
-  description = "Size of VMs in k8s cluster"
-  default     = "Standard_D4_v3"
+  default = [{
+    name = "default"
+  }]
+  type = list
 }
 
 variable "admin_username" {
