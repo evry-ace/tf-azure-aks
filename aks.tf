@@ -28,6 +28,21 @@ locals {
     # min_count           = lookup(p, "min_count", local.default_pool.min_count)
     # max_count           = lookup(p, "max_count", local.default_pool.max_count)
   }]
+
+  diagnostics = [
+    {
+      category  = "kube-controller-manager",
+      retention = { enabled = false, days = 0 }
+    },
+    {
+      category  = "kube-apiserver",
+      retention = { enabled = false, days = 0 }
+    },
+    {
+      category  = "kube-scheduler",
+      retention = { enabled = false, days = 0 }
+    }
+  ]
 }
 
 resource "azurerm_virtual_network" "k8s_agent_network" {
@@ -132,6 +147,26 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
           enabled                    = var.oms_agent_enable
           log_analytics_workspace_id = var.oms_workspace_id
         }
+      }
+    }
+  }
+}
+
+resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {
+  count = var.oms_workspace_id != "" ? 1 : 0
+  name                       = "diag-${var.cluster_name}"
+  target_resource_id         = azurerm_kubernetes_cluster.k8s_cluster.id
+  log_analytics_workspace_id = var.oms_workspace_id
+
+  dynamic "log" {
+    for_each = local.diagnostics
+
+    content {
+      category = log.value.category
+
+      retention_policy {
+        enabled = log.value.retention.enabled
+        days    = log.value.retention.days
       }
     }
   }
