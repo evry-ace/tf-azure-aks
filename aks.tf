@@ -1,5 +1,6 @@
 locals {
-  env = var.environment != "" ? var.environment : terraform.workspace
+  tags = {
+  }
 
   default_pool = {
     name                = "default"
@@ -87,6 +88,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     }
   }
 
+  node_resource_group = var.node_resource_group
 
   #if No aks_vnet_subnet_id is passed THEN use newly created subnet id ELSE use PASSED subnet id
   dynamic "agent_pool_profile" {
@@ -112,9 +114,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     client_secret = var.client_secret
   }
 
-  tags = {
-    Environment = local.env
-  }
+  tags = var.tags
 
   role_based_access_control {
     enabled = var.rbac_enable
@@ -153,7 +153,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
 }
 
 resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {
-  count = var.oms_workspace_id != "" ? 1 : 0
+  count                      = var.oms_workspace_id != "" ? 1 : 0
   name                       = "diag-${var.cluster_name}"
   target_resource_id         = azurerm_kubernetes_cluster.k8s_cluster.id
   log_analytics_workspace_id = var.oms_workspace_id

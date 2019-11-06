@@ -1,7 +1,6 @@
 ## Metadata ##
-variable "environment" {
-  description = "A name for the environment"
-  default     = ""
+variable "tags" {
+  default = {}
 }
 
 ## Environment variables ##
@@ -35,6 +34,10 @@ variable "node_pools" {
     name = "default"
   }]
   type = list
+}
+
+variable "node_resource_group" {
+  default = null
 }
 
 variable "admin_username" {
@@ -121,3 +124,6 @@ variable "oms_agent_enable" {
   description = "Enable OMS Agent profile"
   default     = true
 }
+
+
+
