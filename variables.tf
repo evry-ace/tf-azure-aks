@@ -28,12 +28,17 @@ variable "dns_prefix" {
   #  default     = "${var.cluster-name}-${var.environment}"
 }
 
+variable "create_default_pool" {
+  default = true
+}
+
+variable "default_pool" {
+  default = {}
+}
+
 variable "node_pools" {
   description = "Node pools to use"
-  default = [{
-    name = "default"
-  }]
-  type = list
+  default     = []
 }
 
 variable "node_resource_group" {

@@ -2,18 +2,21 @@ locals {
   tags = {
   }
 
-  default_pool = {
+  default_pool_settings = {
     name                = "default"
-    count               = 2
+    node_count          = 2
     vm_size             = "Standard_D3_v2"
     os_type             = "Linux"
     os_disk_size_gb     = 50
-    type                = "AvailabilitySet"
+    type                = "VirtualMachineScaleSets"
     enable_auto_scaling = false
     min_count           = 3
     max_count           = 6
     availability_zones  = []
+    vnet_subnet_id      = var.aks_vnet_subnet_id
   }
+
+  default_pool = merge(var.default_pool, local.default_pool_settings)
 
   node_pools = [for p in var.node_pools : {
     name               = p.name
@@ -21,7 +24,7 @@ locals {
     vm_size            = lookup(p, "vm_size", local.default_pool.vm_size)
     os_type            = lookup(p, "os_type", local.default_pool.os_type)
     os_disk_size_gb    = lookup(p, "os_dize_size_gb", local.default_pool.os_disk_size_gb)
-    subnet_id          = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, [""]), 0) : var.aks_vnet_subnet_id
+    vnet_subnet_id     = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, [""]), 0) : var.aks_vnet_subnet_id
     availability_zones = lookup(p, "availability_zones", local.default_pool.availability_zones)
 
     type = p.type
@@ -91,18 +94,17 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   node_resource_group = var.node_resource_group
 
   #if No aks_vnet_subnet_id is passed THEN use newly created subnet id ELSE use PASSED subnet id
-  dynamic "agent_pool_profile" {
-    for_each = local.node_pools
+  dynamic "default_node_pool" {
+    for_each = var.create_default_pool ? [local.default_pool] : []
 
     content {
-      name               = agent_pool_profile.value.name
-      count              = agent_pool_profile.value.count
-      vm_size            = agent_pool_profile.value.vm_size
-      os_type            = agent_pool_profile.value.os_type
-      os_disk_size_gb    = agent_pool_profile.value.os_disk_size_gb
-      vnet_subnet_id     = agent_pool_profile.value.subnet_id
-      availability_zones = agent_pool_profile.value.availability_zones
-      type               = agent_pool_profile.value.type
+      name               = default_node_pool.value.name
+      node_count         = default_node_pool.value.node_count
+      vm_size            = default_node_pool.value.vm_size
+      os_disk_size_gb    = default_node_pool.value.os_disk_size_gb
+      vnet_subnet_id     = default_node_pool.value.vnet_subnet_id
+      availability_zones = default_node_pool.value.availability_zones
+      type               = default_node_pool.value.type
       # enable_auto_scaling = agent_pool_profile.value.enable_auto_scaling
       # min_count           = agent_pool_profile.value.min_count
       # max_count           = agent_pool_profile.value.max_count
@@ -151,6 +153,14 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     }
   }
 }
+
+# resource "azurerm_kubernetes_cluster_node_pool" "aks-node" {
+#     for_each = local.node_pools
+
+#     name = each.value.name
+
+# }
+
 
 resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {
   count                      = var.oms_workspace_id != "" ? 1 : 0
