@@ -154,12 +154,19 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   }
 }
 
-# resource "azurerm_kubernetes_cluster_node_pool" "aks-node" {
-#     for_each = local.node_pools
+resource "azurerm_kubernetes_cluster_node_pool" "aks-node" {
+  for_each = toset(local.node_pools)
 
-#     name = each.value.name
+  name                  = each.value.name
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.k8s_cluster.id
 
-# }
+  node_count         = each.value.node_count
+  vm_size            = each.value.vm_size
+  os_disk_size_gb    = each.value.os_disk_size_gb
+  vnet_subnet_id     = each.value.vnet_subnet_id
+  availability_zones = each.value.availability_zones
+  os_type            = each.value.os_type
+}
 
 
 resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {
