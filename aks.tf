@@ -16,7 +16,7 @@ locals {
     vnet_subnet_id      = var.aks_vnet_subnet_id
   }
 
-  default_pool = merge(var.default_pool, local.default_pool_settings)
+  default_pool = merge(local.default_pool_settings, var.default_pool)
 
   node_pools = [for p in var.node_pools : {
     name               = p.name
