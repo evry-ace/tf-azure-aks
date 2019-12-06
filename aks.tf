@@ -20,7 +20,7 @@ locals {
 
   node_pools = [for p in var.node_pools : {
     name               = p.name
-    count              = lookup(p, "count", local.default_pool.count)
+    node_count         = lookup(p, "node_count", local.default_pool.node_count)
     vm_size            = lookup(p, "vm_size", local.default_pool.vm_size)
     os_type            = lookup(p, "os_type", local.default_pool.os_type)
     os_disk_size_gb    = lookup(p, "os_dize_size_gb", local.default_pool.os_disk_size_gb)
