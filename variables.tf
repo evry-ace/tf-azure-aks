@@ -28,10 +28,6 @@ variable "dns_prefix" {
   #  default     = "${var.cluster-name}-${var.environment}"
 }
 
-variable "create_default_pool" {
-  default = true
-}
-
 variable "default_pool" {
   default = {}
 }
@@ -85,12 +81,17 @@ variable "rbac_server_app_secret" {
 #}
 
 variable "load_balancer_sku" {
-  default = "basic"
+  default = "standard"
 }
 
 variable "aks_network_plugin" {
   default = "kubenet"
 }
+
+variable "aks_network_policy" {
+  default = null
+}
+
 
 variable "aks_pod_cidr" {
   default = "10.244.0.0/16"

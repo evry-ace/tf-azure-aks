@@ -95,7 +95,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
 
   #if No aks_vnet_subnet_id is passed THEN use newly created subnet id ELSE use PASSED subnet id
   dynamic "default_node_pool" {
-    for_each = var.create_default_pool ? [local.default_pool] : []
+    for_each = [local.default_pool]
 
     content {
       name               = default_node_pool.value.name
@@ -131,7 +131,10 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
 
   network_profile {
     load_balancer_sku  = var.load_balancer_sku
+
     network_plugin     = var.aks_network_plugin
+    network_policy     = var.aks_network_policy
+
     pod_cidr           = var.aks_pod_cidr
     service_cidr       = var.aks_service_cidr
     dns_service_ip     = var.aks_dns_service_ip
@@ -139,9 +142,13 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   }
 
   dynamic "addon_profile" {
-    for_each = var.oms_agent_enable ? [1] : []
+    for_each = [1]
 
     content {
+      kube_dashboard {
+        enabled = false
+      }
+
       dynamic "oms_agent" {
         for_each = var.oms_agent_enable ? [1] : []
 
