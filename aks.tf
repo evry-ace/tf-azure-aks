@@ -104,9 +104,22 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     }
   }
 
-  service_principal {
-    client_id     = var.client_id
-    client_secret = var.client_secret
+  dynamic "service_principal" {
+    for_each = var.client_id != "" ? [1] : []
+
+    content {
+      client_id     = var.client_id
+      client_secret = var.client_secret
+    }
+  }
+
+
+  dynamic "identity" {
+    for_each = var.client_id == "" ? [1] : []
+
+    content {
+      type = var.identity_type
+    }
   }
 
   tags = var.tags
@@ -123,10 +136,10 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   }
 
   network_profile {
-    load_balancer_sku  = var.load_balancer_sku
+    load_balancer_sku = var.load_balancer_sku
 
-    network_plugin     = var.aks_network_plugin
-    network_policy     = var.aks_network_policy
+    network_plugin = var.aks_network_plugin
+    network_policy = var.aks_network_policy
 
     pod_cidr           = var.aks_pod_cidr
     service_cidr       = var.aks_service_cidr
@@ -152,6 +165,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
       }
     }
   }
+
 }
 
 resource "azurerm_kubernetes_cluster_node_pool" "aks-node" {

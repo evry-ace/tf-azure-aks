@@ -51,11 +51,17 @@ variable "ssh_public_key" {
 }
 
 variable "client_id" {
+  default     = ""
   description = "azure client id"
 }
 
 variable "client_secret" {
+  default = ""
   description = "azure client secret"
+}
+
+variable "identity_type" {
+  default = "SystemAssigned"
 }
 
 ## RBAC variables ##
