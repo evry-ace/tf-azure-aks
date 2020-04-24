@@ -51,12 +51,12 @@ variable "ssh_public_key" {
 }
 
 variable "client_id" {
-  default     = ""
+  default     = null
   description = "azure client id"
 }
 
 variable "client_secret" {
-  default = ""
+  default     = null
   description = "azure client secret"
 }
 
@@ -86,21 +86,42 @@ variable "rbac_server_app_secret" {
 #	description = "The Tenant ID used for Azure Active Directory Application. If this isn't specified the Tenant ID of the current Subscription is used"
 #}
 
+# Networking settings.
 variable "load_balancer_sku" {
   default = "standard"
+  type = string
+}
+
+variable "managed_outbound_ip_count" {
+  default = null
+  type = number
+}
+
+variable "outbound_ip_address_ids" {
+  default = null
+  type = list
+}
+
+variable "outbound_ip_prefix_ids" {
+  default = null
+  type = list
+}
+
+variable "outbound_type" {
+  default = null
+  type = "string"
 }
 
 variable "aks_network_plugin" {
-  default = "kubenet"
+  default = "calico"
 }
 
 variable "aks_network_policy" {
   default = null
 }
 
-
 variable "aks_pod_cidr" {
-  default = "10.244.0.0/16"
+  default = null
 }
 
 variable "aks_service_cidr" {
