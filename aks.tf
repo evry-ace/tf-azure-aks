@@ -105,7 +105,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   }
 
   dynamic "service_principal" {
-    for_each = var.client_id != "" ? [1] : []
+    for_each = var.client_id != null ? [1] : []
 
     content {
       client_id     = var.client_id
@@ -113,16 +113,14 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     }
   }
 
-
   dynamic "identity" {
-    for_each = var.client_id == "" ? [1] : []
+    for_each = var.client_id == null ? [1] : []
 
     content {
       type = var.identity_type
     }
   }
 
-  tags = var.tags
 
   role_based_access_control {
     enabled = var.rbac_enable
@@ -134,9 +132,9 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
       #use current subscription .. tenant_id = "${var.rbac_tenant_id}"
     }
   }
-
   network_profile {
     load_balancer_sku = var.load_balancer_sku
+    outbound_type = var.outbound_type
 
     network_plugin = var.aks_network_plugin
     network_policy = var.aks_network_policy
@@ -145,6 +143,16 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     service_cidr       = var.aks_service_cidr
     dns_service_ip     = var.aks_dns_service_ip
     docker_bridge_cidr = var.aks_docker_bridge_cidr
+
+    dynamic "load_balancer_profile" {
+      for_each = var.outbound_type == "loadbalancer" ? [1] : []
+
+      content {
+        managed_outbound_ip_count = var.managed_outbound_ip_count
+        outbound_ip_prefix_ids    = var.outbound_ip_prefix_ids
+        outbound_ip_address_ids   = var.outbound_ip_address_ids
+      }
+    }
   }
 
   dynamic "addon_profile" {
@@ -166,6 +174,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     }
   }
 
+  tags = var.tags
 }
 
 resource "azurerm_kubernetes_cluster_node_pool" "aks-node" {
