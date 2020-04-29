@@ -42,3 +42,7 @@ CONFIGURE
 output "kubelet_identity" {
   value = azurerm_kubernetes_cluster.k8s_cluster.kubelet_identity
 }
+
+output "identity" {
+  value = azurerm_kubernetes_cluster.k8s_cluster.identity
+}
