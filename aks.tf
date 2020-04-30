@@ -212,6 +212,3 @@ resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {
   }
 }
 
-output "k8s_cluster" {
-  value = azurerm_kubernetes_cluster.k8s_cluster
-}

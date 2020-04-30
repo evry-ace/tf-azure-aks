@@ -46,3 +46,7 @@ output "kubelet_identity" {
 output "identity" {
   value = azurerm_kubernetes_cluster.k8s_cluster.identity
 }
+
+output "load_balancer_profile" {
+  value = azurerm_kubernetes_cluster.k8s_cluster.load_balancer_profile
+}
