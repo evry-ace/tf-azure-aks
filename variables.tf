@@ -89,27 +89,27 @@ variable "rbac_server_app_secret" {
 # Networking settings.
 variable "load_balancer_sku" {
   default = "standard"
-  type = string
+  type    = string
 }
 
 variable "managed_outbound_ip_count" {
   default = null
-  type = number
+  type    = number
 }
 
 variable "outbound_ip_address_ids" {
   default = null
-  type = list
+  type    = list
 }
 
 variable "outbound_ip_prefix_ids" {
   default = null
-  type = list
+  type    = list
 }
 
 variable "outbound_type" {
   default = null
-  type = "string"
+  type    = string
 }
 
 variable "aks_network_plugin" {
