@@ -134,7 +134,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   }
   network_profile {
     load_balancer_sku = var.load_balancer_sku
-    outbound_type = var.outbound_type
+    outbound_type     = var.outbound_type
 
     network_plugin = var.aks_network_plugin
     network_policy = var.aks_network_policy
