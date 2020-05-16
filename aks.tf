@@ -3,34 +3,31 @@ locals {
   }
 
   default_pool_settings = {
-    name                = "default"
-    node_count          = 2
-    vm_size             = "Standard_D3_v2"
-    os_type             = "Linux"
-    os_disk_size_gb     = 50
-    type                = "VirtualMachineScaleSets"
-    enable_auto_scaling = true
-    min_count           = 1
-    max_count           = 2
-    availability_zones  = []
-    vnet_subnet_id      = var.aks_vnet_subnet_id
+    name               = "default"
+    node_count         = 2
+    vm_size            = "Standard_D3_v2"
+    os_type            = "Linux"
+    os_disk_size_gb    = 50
+    type               = "VirtualMachineScaleSets"
+    min_count          = 1
+    max_count          = 2
+    availability_zones = []
+    vnet_subnet_id     = var.aks_vnet_subnet_id
   }
-
-  default_pool = merge(local.default_pool_settings, var.default_pool)
 
   node_pools = [for p in var.node_pools : {
     name               = p.name
-    node_count         = lookup(p, "node_count", local.default_pool.node_count)
-    vm_size            = lookup(p, "vm_size", local.default_pool.vm_size)
-    os_type            = lookup(p, "os_type", local.default_pool.os_type)
-    os_disk_size_gb    = lookup(p, "os_dize_size_gb", local.default_pool.os_disk_size_gb)
+    node_count         = lookup(p, "node_count", local.default_pool_settings.node_count)
+    vm_size            = lookup(p, "vm_size", local.default_pool_settings.vm_size)
+    os_type            = lookup(p, "os_type", local.default_pool_settings.os_type)
+    os_disk_size_gb    = lookup(p, "os_dize_size_gb", local.default_pool_settings.os_disk_size_gb)
     vnet_subnet_id     = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, [""]), 0) : var.aks_vnet_subnet_id
-    availability_zones = lookup(p, "availability_zones", local.default_pool.availability_zones)
+    availability_zones = lookup(p, "availability_zones", local.default_pool_settings.availability_zones)
 
     type                = p.type
-    enable_auto_scaling = lookup(p, "enable_auto_scaling", local.default_pool.enable_auto_scaling)
-    min_count           = lookup(p, "min_count", local.default_pool.min_count)
-    max_count           = lookup(p, "max_count", local.default_pool.max_count)
+    enable_auto_scaling = lookup(p, "enable_auto_scaling", true)
+    min_count           = lookup(p, "min_count", lookup(p, "enable_auto_scaling", true) ? local.default_pool_settings.min_count : null)
+    max_count           = lookup(p, "max_count", lookup(p, "enable_auto_scaling", true) ? local.default_pool_settings.max_count : null)
   }]
 
   diagnostics = [
@@ -87,21 +84,17 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   node_resource_group = var.node_resource_group
 
   #if No aks_vnet_subnet_id is passed THEN use newly created subnet id ELSE use PASSED subnet id
-  dynamic "default_node_pool" {
-    for_each = [local.default_pool]
-
-    content {
-      name                = default_node_pool.value.name
-      node_count          = default_node_pool.value.node_count
-      vm_size             = default_node_pool.value.vm_size
-      os_disk_size_gb     = default_node_pool.value.os_disk_size_gb
-      vnet_subnet_id      = default_node_pool.value.vnet_subnet_id
-      availability_zones  = default_node_pool.value.availability_zones
-      type                = default_node_pool.value.type
-      enable_auto_scaling = default_node_pool.value.enable_auto_scaling
-      min_count           = default_node_pool.value.min_count
-      max_count           = default_node_pool.value.max_count
-    }
+  default_node_pool {
+    name                = "default"
+    node_count          = lookup(var.default_pool, "node_count", local.default_pool_settings.node_count)
+    vm_size             = lookup(var.default_pool, "vm_size", local.default_pool_settings.vm_size)
+    os_disk_size_gb     = lookup(var.default_pool, "os_dize_size_gb", local.default_pool_settings.os_disk_size_gb)
+    vnet_subnet_id      = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, [""]), 0) : var.aks_vnet_subnet_id
+    availability_zones  = lookup(var.default_pool, "availability_zones", local.default_pool_settings.availability_zones)
+    type                = lookup(var.default_pool, "type", local.default_pool_settings.type)
+    enable_auto_scaling = lookup(var.default_pool, "enable_auto_scaling", true)
+    min_count           = lookup(var.default_pool, "min_count", lookup(var.default_pool, "enable_auto_scaling", true) ? local.default_pool_settings.min_count : null)
+    max_count           = lookup(var.default_pool, "max_count", lookup(var.default_pool, "enable_auto_scaling", true) ? local.default_pool_settings.max_count : null)
   }
 
   dynamic "service_principal" {
