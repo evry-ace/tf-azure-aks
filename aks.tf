@@ -9,9 +9,9 @@ locals {
     os_type             = "Linux"
     os_disk_size_gb     = 50
     type                = "VirtualMachineScaleSets"
-    enable_auto_scaling = false
-    min_count           = 3
-    max_count           = 6
+    enable_auto_scaling = true
+    min_count           = 1
+    max_count           = 2
     availability_zones  = []
     vnet_subnet_id      = var.aks_vnet_subnet_id
   }
@@ -27,10 +27,10 @@ locals {
     vnet_subnet_id     = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, [""]), 0) : var.aks_vnet_subnet_id
     availability_zones = lookup(p, "availability_zones", local.default_pool.availability_zones)
 
-    type = p.type
-    # enable_auto_scaling = false
-    # min_count           = lookup(p, "min_count", local.default_pool.min_count)
-    # max_count           = lookup(p, "max_count", local.default_pool.max_count)
+    type                = p.type
+    enable_auto_scaling = lookup(p, "enable_auto_scaling", local.default_pool.enable_auto_scaling)
+    min_count           = lookup(p, "min_count", local.default_pool.min_count)
+    max_count           = lookup(p, "max_count", local.default_pool.max_count)
   }]
 
   diagnostics = [
@@ -91,16 +91,16 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     for_each = [local.default_pool]
 
     content {
-      name               = default_node_pool.value.name
-      node_count         = default_node_pool.value.node_count
-      vm_size            = default_node_pool.value.vm_size
-      os_disk_size_gb    = default_node_pool.value.os_disk_size_gb
-      vnet_subnet_id     = default_node_pool.value.vnet_subnet_id
-      availability_zones = default_node_pool.value.availability_zones
-      type               = default_node_pool.value.type
-      # enable_auto_scaling = agent_pool_profile.value.enable_auto_scaling
-      # min_count           = agent_pool_profile.value.min_count
-      # max_count           = agent_pool_profile.value.max_count
+      name                = default_node_pool.value.name
+      node_count          = default_node_pool.value.node_count
+      vm_size             = default_node_pool.value.vm_size
+      os_disk_size_gb     = default_node_pool.value.os_disk_size_gb
+      vnet_subnet_id      = default_node_pool.value.vnet_subnet_id
+      availability_zones  = default_node_pool.value.availability_zones
+      type                = default_node_pool.value.type
+      enable_auto_scaling = default_node_pool.value.enable_auto_scaling
+      min_count           = default_node_pool.value.min_count
+      max_count           = default_node_pool.value.max_count
     }
   }
 
@@ -132,6 +132,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
       #use current subscription .. tenant_id = "${var.rbac_tenant_id}"
     }
   }
+
   network_profile {
     load_balancer_sku = var.load_balancer_sku
     outbound_type     = var.outbound_type
