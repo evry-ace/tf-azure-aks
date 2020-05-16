@@ -105,7 +105,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   }
 
   dynamic "service_principal" {
-    for_each = var.client_id != null ? [1] : []
+    for_each = var.identity_type == "SP" ? [1] : []
 
     content {
       client_id     = var.client_id
@@ -114,13 +114,12 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   }
 
   dynamic "identity" {
-    for_each = var.client_id == null ? [1] : []
+    for_each = var.identity_type != "SP" ? [1] : []
 
     content {
       type = var.identity_type
     }
   }
-
 
   role_based_access_control {
     enabled = var.rbac_enable
