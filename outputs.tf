@@ -50,3 +50,8 @@ output "identity" {
 output "network_profile" {
   value = azurerm_kubernetes_cluster.k8s_cluster.network_profile
 }
+
+// Re-export the AKS name for usage
+output "name" {
+  value = var.cluster_name
+}
