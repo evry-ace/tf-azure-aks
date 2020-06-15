@@ -55,3 +55,7 @@ output "network_profile" {
 output "name" {
   value = var.cluster_name
 }
+
+output "id" {
+  value = azurerm_kubernetes_cluster.k8s_cluster.id
+}
