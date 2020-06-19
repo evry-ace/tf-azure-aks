@@ -1,7 +1,4 @@
 locals {
-  tags = {
-  }
-
   default_pool_settings = {
     name               = "default"
     node_count         = 2
@@ -24,10 +21,11 @@ locals {
     vnet_subnet_id     = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, [""]), 0) : var.aks_vnet_subnet_id
     availability_zones = lookup(p, "availability_zones", local.default_pool_settings.availability_zones)
 
-    type                = p.type
+    type                = lookup(p, "type", "System")
     enable_auto_scaling = lookup(p, "enable_auto_scaling", true)
     min_count           = lookup(p, "min_count", lookup(p, "enable_auto_scaling", true) ? local.default_pool_settings.min_count : null)
     max_count           = lookup(p, "max_count", lookup(p, "enable_auto_scaling", true) ? local.default_pool_settings.max_count : null)
+    tags = lookup(p, "tags", var.tags)
   }]
 
   diagnostics = [
@@ -95,6 +93,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     enable_auto_scaling = lookup(var.default_pool, "enable_auto_scaling", true)
     min_count           = lookup(var.default_pool, "min_count", lookup(var.default_pool, "enable_auto_scaling", true) ? local.default_pool_settings.min_count : null)
     max_count           = lookup(var.default_pool, "max_count", lookup(var.default_pool, "enable_auto_scaling", true) ? local.default_pool_settings.max_count : null)
+    tags           = lookup(var.default_pool, "tags", var.tags)
   }
 
   dynamic "service_principal" {
@@ -118,9 +117,11 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     enabled = var.rbac_enable
 
     azure_active_directory {
-      client_app_id     = var.rbac_client_app_id
-      server_app_id     = var.rbac_server_app_id
-      server_app_secret = var.rbac_server_app_secret
+      managed = var.rbac_managed
+      admin_group_object_ids = var.rbac_admin_group_ids
+      client_app_id     = var.rbac_managed == false ? var.rbac_client_app_id : null
+      server_app_id     = var.rbac_managed == false ? var.rbac_server_app_id : null 
+      server_app_secret = var.rbac_managed == false ? var.rbac_server_app_secret : null
       #use current subscription .. tenant_id = "${var.rbac_tenant_id}"
     }
   }
@@ -183,7 +184,6 @@ resource "azurerm_kubernetes_cluster_node_pool" "aks-node" {
   availability_zones = each.value.availability_zones
   os_type            = each.value.os_type
 }
-
 
 resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {
   count                      = var.oms_workspace_id != "" ? 1 : 0
