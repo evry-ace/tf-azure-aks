@@ -70,16 +70,29 @@ variable "rbac_enable" {
   default     = true
 }
 
+variable "rbac_managed" {
+  type = bool
+  default = false
+}
+
 variable "rbac_client_app_id" {
+  default     = null
   description = "The Client ID of an Azure Active Directory Application"
 }
 
 variable "rbac_server_app_id" {
+  default     = null
   description = "The Server ID of an Azure Active Directory Application"
 }
 
 variable "rbac_server_app_secret" {
+  default     = null
   description = "The Client Secret of an Azure Active Directory Application"
+}
+
+variable "rbac_admin_group_ids" {
+  default = []
+  type = list
 }
 
 #variable "rbac_tenant_id" {
