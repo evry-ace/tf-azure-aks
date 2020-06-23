@@ -70,7 +70,8 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   dns_prefix          = var.dns_prefix
 
   kubernetes_version = var.k8s_version
-
+  max_pods = var.max_pods
+  
   linux_profile {
     admin_username = var.admin_username
 

@@ -28,6 +28,11 @@ variable "dns_prefix" {
   #  default     = "${var.cluster-name}-${var.environment}"
 }
 
+variable "max_pods" {
+  default = 30
+  description = "Max pods to support in this cluster pr node"
+}
+
 variable "default_pool" {
   default = {}
 }
