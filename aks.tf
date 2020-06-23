@@ -10,6 +10,7 @@ locals {
     max_count          = 2
     availability_zones = []
     vnet_subnet_id     = var.aks_vnet_subnet_id
+    max_pods = 30
   }
 
   node_pools = [for p in var.node_pools : {
@@ -25,7 +26,8 @@ locals {
     enable_auto_scaling = lookup(p, "enable_auto_scaling", true)
     min_count           = lookup(p, "min_count", lookup(p, "enable_auto_scaling", true) ? local.default_pool_settings.min_count : null)
     max_count           = lookup(p, "max_count", lookup(p, "enable_auto_scaling", true) ? local.default_pool_settings.max_count : null)
-    tags = lookup(p, "tags", var.tags)
+    tags                = lookup(p, "tags", var.tags)
+    max_pods            = lookup(var.default_pool, "max_pods", local.default_pool_settings.max_pods)
   }]
 
   diagnostics = [
@@ -70,8 +72,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   dns_prefix          = var.dns_prefix
 
   kubernetes_version = var.k8s_version
-  max_pods = var.max_pods
-  
+
   linux_profile {
     admin_username = var.admin_username
 
@@ -94,7 +95,8 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     enable_auto_scaling = lookup(var.default_pool, "enable_auto_scaling", true)
     min_count           = lookup(var.default_pool, "min_count", lookup(var.default_pool, "enable_auto_scaling", true) ? local.default_pool_settings.min_count : null)
     max_count           = lookup(var.default_pool, "max_count", lookup(var.default_pool, "enable_auto_scaling", true) ? local.default_pool_settings.max_count : null)
-    tags           = lookup(var.default_pool, "tags", var.tags)
+    tags                = lookup(var.default_pool, "tags", var.tags)
+    max_pods            = lookup(var.default_pool, "max_pods", local.default_pool_settings.max_pods)
   }
 
   dynamic "service_principal" {
@@ -118,11 +120,11 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     enabled = var.rbac_enable
 
     azure_active_directory {
-      managed = var.rbac_managed
+      managed                = var.rbac_managed
       admin_group_object_ids = var.rbac_admin_group_ids
-      client_app_id     = var.rbac_managed == false ? var.rbac_client_app_id : null
-      server_app_id     = var.rbac_managed == false ? var.rbac_server_app_id : null 
-      server_app_secret = var.rbac_managed == false ? var.rbac_server_app_secret : null
+      client_app_id          = var.rbac_managed == false ? var.rbac_client_app_id : null
+      server_app_id          = var.rbac_managed == false ? var.rbac_server_app_id : null
+      server_app_secret      = var.rbac_managed == false ? var.rbac_server_app_secret : null
       #use current subscription .. tenant_id = "${var.rbac_tenant_id}"
     }
   }

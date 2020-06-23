@@ -29,7 +29,7 @@ variable "dns_prefix" {
 }
 
 variable "max_pods" {
-  default = 30
+  default     = 30
   description = "Max pods to support in this cluster pr node"
 }
 
@@ -76,7 +76,7 @@ variable "rbac_enable" {
 }
 
 variable "rbac_managed" {
-  type = bool
+  type    = bool
   default = false
 }
 
@@ -97,7 +97,7 @@ variable "rbac_server_app_secret" {
 
 variable "rbac_admin_group_ids" {
   default = []
-  type = list
+  type    = list
 }
 
 #variable "rbac_tenant_id" {
