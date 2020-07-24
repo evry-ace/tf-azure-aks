@@ -10,7 +10,7 @@ locals {
     max_count          = 2
     availability_zones = []
     vnet_subnet_id     = var.aks_vnet_subnet_id
-    max_pods = 30
+    max_pods           = 30
   }
 
   node_pools = [for p in var.node_pools : {
