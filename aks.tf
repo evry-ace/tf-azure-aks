@@ -10,7 +10,7 @@ locals {
     max_count          = 2
     availability_zones = []
     vnet_subnet_id     = var.aks_vnet_subnet_id
-    max_pods = 30
+    max_pods           = 30
   }
 
   node_pools = [for p in var.node_pools : {
@@ -61,8 +61,8 @@ resource "azurerm_subnet" "k8s_agent_subnet" {
   resource_group_name  = var.resource_group_name
 
   # IF aks_vnet_subnet_id (NO Subnet is passed) CREATE this SUBNET ELSE DONT
-  count          = var.create_vnet ? 1 : 0
-  address_prefix = var.aks_vnet_subnet_cidr
+  count            = var.create_vnet ? 1 : 0
+  address_prefixes = [var.aks_vnet_subnet_cidr]
 }
 
 resource "azurerm_kubernetes_cluster" "k8s_cluster" {
