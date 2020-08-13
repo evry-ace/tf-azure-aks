@@ -92,18 +92,19 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
 
   #if No aks_vnet_subnet_id is passed THEN use newly created subnet id ELSE use PASSED subnet id
   default_node_pool {
-    name                = "default"
-    node_count          = lookup(var.default_pool, "node_count", local.default_pool_settings.node_count)
-    vm_size             = lookup(var.default_pool, "vm_size", local.default_pool_settings.vm_size)
-    os_disk_size_gb     = lookup(var.default_pool, "os_dize_size_gb", local.default_pool_settings.os_disk_size_gb)
-    vnet_subnet_id      = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, [""]), 0) : var.aks_vnet_subnet_id
-    availability_zones  = lookup(var.default_pool, "availability_zones", local.default_pool_settings.availability_zones)
-    type                = lookup(var.default_pool, "type", local.default_pool_settings.type)
-    enable_auto_scaling = lookup(var.default_pool, "enable_auto_scaling", true)
-    min_count           = lookup(var.default_pool, "min_count", lookup(var.default_pool, "enable_auto_scaling", true) ? local.default_pool_settings.min_count : null)
-    max_count           = lookup(var.default_pool, "max_count", lookup(var.default_pool, "enable_auto_scaling", true) ? local.default_pool_settings.max_count : null)
-    tags                = lookup(var.default_pool, "tags", var.tags)
-    max_pods            = lookup(var.default_pool, "max_pods", local.default_pool_settings.max_pods)
+    name                 = "default"
+    node_count           = lookup(var.default_pool, "node_count", local.default_pool_settings.node_count)
+    vm_size              = lookup(var.default_pool, "vm_size", local.default_pool_settings.vm_size)
+    os_disk_size_gb      = lookup(var.default_pool, "os_dize_size_gb", local.default_pool_settings.os_disk_size_gb)
+    vnet_subnet_id       = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, [""]), 0) : var.aks_vnet_subnet_id
+    availability_zones   = lookup(var.default_pool, "availability_zones", local.default_pool_settings.availability_zones)
+    type                 = lookup(var.default_pool, "type", local.default_pool_settings.type)
+    enable_auto_scaling  = lookup(var.default_pool, "enable_auto_scaling", true)
+    min_count            = lookup(var.default_pool, "min_count", lookup(var.default_pool, "enable_auto_scaling", true) ? local.default_pool_settings.min_count : null)
+    max_count            = lookup(var.default_pool, "max_count", lookup(var.default_pool, "enable_auto_scaling", true) ? local.default_pool_settings.max_count : null)
+    tags                 = lookup(var.default_pool, "tags", var.tags)
+    max_pods             = lookup(var.default_pool, "max_pods", local.default_pool_settings.max_pods)
+    orchestrator_version = lookup(var.default_pool, "k8s_version", local.default_pool_settings.k8s_version)
   }
 
   dynamic "service_principal" {
