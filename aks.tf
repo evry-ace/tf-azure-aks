@@ -16,6 +16,7 @@ locals {
     k8s_version        = var.k8s_version
     node_labels        = {}
     node_taints        = []
+    spot_max_price     = -1
   }
 
   node_pools = {
