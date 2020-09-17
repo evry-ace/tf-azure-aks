@@ -131,11 +131,11 @@ variable "outbound_type" {
 }
 
 variable "aks_network_plugin" {
-  default = "calico"
+  default = "azure"
 }
 
 variable "aks_network_policy" {
-  default = null
+  default = "calico"
 }
 
 variable "aks_pod_cidr" {
