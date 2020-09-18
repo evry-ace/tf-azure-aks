@@ -178,5 +178,6 @@ variable "oms_agent_enable" {
 
 variable "enable_diagnostics" {
   default = false
+  type    = bool
 }
 
