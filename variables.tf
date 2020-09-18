@@ -181,3 +181,19 @@ variable "enable_diagnostics" {
   type    = bool
 }
 
+variable "diagnostics_settings" {
+  type = map(object({
+    enabled = bool
+    retention = object({
+      enabled = bool
+      days    = number
+    })
+  }))
+  #  default = {
+  #    enabled = false
+  #    retention = {
+  #      enabled = false
+  #      days    = 0
+  #    }
+  #  }
+}
