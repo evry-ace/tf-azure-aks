@@ -59,33 +59,33 @@ locals {
     {
       category  = "cluster-autoscaler",
       retention = { enabled = false, days = 0 }
-    }
+    },
     {
       category  = "guard",
       retention = { enabled = false, days = 0 }
-    }
+    },
     {
       category  = "kube-apiserver",
       retention = { enabled = false, days = 0 }
-    }
+    },
     {
       category  = "kube-audit",
       retention = { enabled = false, days = 0 }
-    }
+    },
     {
       category  = "kube-audit-admin",
       retention = { enabled = false, days = 0 }
-    }
+    },
     {
       category  = "kube-scheduler",
       retention = { enabled = false, days = 0 }
-    }
+    },
   ]
   metrics = [
     {
       category  = "AllMetrics",
       retention = { enabled = false, days = 0 }
-    }
+    },
   ]
 }
 
