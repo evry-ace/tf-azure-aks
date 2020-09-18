@@ -221,7 +221,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "aks-node" {
 }
 
 resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {
-  count                      = var.oms_workspace_id != "" ? 1 : 0
+  count                      = var.enable_diagnostics ? 1 : 0
   name                       = "diag-${var.cluster_name}"
   target_resource_id         = azurerm_kubernetes_cluster.k8s_cluster.id
   log_analytics_workspace_id = var.oms_workspace_id

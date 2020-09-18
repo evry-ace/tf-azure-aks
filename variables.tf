@@ -176,5 +176,7 @@ variable "oms_agent_enable" {
   default     = true
 }
 
-
+variable "enable_diagnostics" {
+  default = false
+}
 
