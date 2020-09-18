@@ -189,6 +189,7 @@ variable "diagnostics_settings" {
       days    = number
     })
   }))
+  default = {}
   #  default = {
   #    enabled = false
   #    retention = {
