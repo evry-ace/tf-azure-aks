@@ -47,7 +47,7 @@ locals {
     }
   }
 
-  diagnostics = [
+  log_diagnostics = [
     {
       category  = "kube-controller-manager",
       retention = { enabled = false, days = 0 }
@@ -57,7 +57,33 @@ locals {
       retention = { enabled = false, days = 0 }
     },
     {
+      category  = "cluster-autoscaler",
+      retention = { enabled = false, days = 0 }
+    }
+    {
+      category  = "guard",
+      retention = { enabled = false, days = 0 }
+    }
+    {
+      category  = "kube-apiserver",
+      retention = { enabled = false, days = 0 }
+    }
+    {
+      category  = "kube-audit",
+      retention = { enabled = false, days = 0 }
+    }
+    {
+      category  = "kube-audit-admin",
+      retention = { enabled = false, days = 0 }
+    }
+    {
       category  = "kube-scheduler",
+      retention = { enabled = false, days = 0 }
+    }
+  ]
+  metrics = [
+    {
+      category  = "AllMetrics",
       retention = { enabled = false, days = 0 }
     }
   ]
@@ -227,7 +253,7 @@ resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {
   log_analytics_workspace_id = var.oms_workspace_id
 
   dynamic "log" {
-    for_each = local.diagnostics
+    for_each = local.log_diagnostics
 
     content {
       category = log.value.category
@@ -238,4 +264,17 @@ resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {
       }
     }
   }
+  dynamic "metric" {
+    for_each = local.metrics
+
+    content {
+      category = metric.value.category
+
+      retention_policy {
+        enabled = metric.value.retention.enabled
+        days    = metric.value.retention.days
+      }
+    }
+  }
+
 }
