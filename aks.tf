@@ -300,11 +300,14 @@ resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {
     content {
       #category = log.value.category
       category = log.key
-      enabled  = coalesce(log.value.enabled, false)
+      #enabled  = coalesce(log.value.enabled, false)
+      enabled = log.value.enabled
 
       retention_policy {
-        enabled = coalesce(log.value.retention.enabled, false)
-        days    = coalesce(log.value.retention.days, 0)
+        #enabled = coalesce(log.value.retention.enabled, false)
+        enabled = log.value.retention.enabled
+        #days    = coalesce(log.value.retention.days, 0)
+        days = log.value.retention.days
       }
     }
   }
@@ -315,11 +318,14 @@ resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {
     content {
       #category = metric.value.category
       category = metric.key
-      enabled  = coalesce(metric.value.enabled, false)
+      #enabled  = coalesce(metric.value.enabled, false)
+      enabled = metric.value.enabled
 
       retention_policy {
-        enabled = coalesce(metric.value.retention.enabled, false)
-        days    = coalesce(metric.value.retention.days, 0)
+        #enabled = coalesce(metric.value.retention.enabled, false)
+        enabled = metric.value.retention.enabled
+        #days    = coalesce(metric.value.retention.days, 0)
+        days = metric.value.retention.days
       }
     }
   }
