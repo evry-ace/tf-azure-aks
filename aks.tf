@@ -300,11 +300,11 @@ resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {
     content {
       #category = log.value.category
       category = log.key
-      enabled  = log.value.enabled
+      enabled  = coalesce(log.value.enabled, false)
 
       retention_policy {
-        enabled = log.value.retention.enabled
-        days    = log.value.retention.days
+        enabled = coalesce(log.value.retention.enabled, false)
+        days    = coalesce(log.value.retention.days, 0)
       }
     }
   }
