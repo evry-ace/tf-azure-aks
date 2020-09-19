@@ -81,7 +81,7 @@ locals {
       retention = { enabled = false, days = 0 }
     }
   }
-  default_metrics_analytics = {
+  default_metrics = {
     "AllMetrics" = {
       enabled   = false,
       retention = { enabled = false, days = 0 }
@@ -295,7 +295,7 @@ resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {
 
   dynamic "log" {
     #for_each = local.log_diagnostics
-    for_each = local.default_log_analytics
+    for_each = merge(local.default_log_analytics, var.log_analytics)
 
     content {
       #category = log.value.category
@@ -310,16 +310,16 @@ resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {
   }
   dynamic "metric" {
     #for_each = local.metrics
-    for_each = local.default_metrics_analytics
+    for_each = merge(local.default_metrics, var.metrics)
 
     content {
       #category = metric.value.category
       category = metric.key
-      enabled  = metric.value.enabled
+      enabled  = coalesce(metric.value.enabled, false)
 
       retention_policy {
-        enabled = metric.value.retention.enabled
-        days    = metric.value.retention.days
+        enabled = coalesce(metric.value.retention.enabled, false)
+        days    = coalesce(metric.value.retention.daysi, 0)
       }
     }
   }
