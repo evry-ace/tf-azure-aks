@@ -319,7 +319,7 @@ resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {
 
       retention_policy {
         enabled = coalesce(metric.value.retention.enabled, false)
-        days    = coalesce(metric.value.retention.daysi, 0)
+        days    = coalesce(metric.value.retention.days, 0)
       }
     }
   }
