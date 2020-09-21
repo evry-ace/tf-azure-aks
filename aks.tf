@@ -47,20 +47,46 @@ locals {
     }
   }
 
-  diagnostics = [
-    {
-      category  = "kube-controller-manager",
-      retention = { enabled = false, days = 0 }
-    },
-    {
-      category  = "kube-apiserver",
-      retention = { enabled = false, days = 0 }
-    },
-    {
-      category  = "kube-scheduler",
+  default_log_analytics = {
+    "kube-controller-manager" = {
+      enabled   = false,
       retention = { enabled = false, days = 0 }
     }
-  ]
+    "kube-apiserver" = {
+      enabled   = false,
+      retention = { enabled = false, days = 0 }
+    }
+    "cluster-autoscaler" = {
+      enabled   = false,
+      retention = { enabled = false, days = 0 }
+    }
+    "guard" = {
+      enabled   = false,
+      retention = { enabled = false, days = 0 }
+    }
+    "kube-apiserver" = {
+      enabled   = false,
+      retention = { enabled = false, days = 0 }
+    }
+    "kube-audit" = {
+      enabled   = false,
+      retention = { enabled = false, days = 0 }
+    }
+    "kube-audit-admin" = {
+      enabled   = false,
+      retention = { enabled = false, days = 0 }
+    }
+    "kube-scheduler" = {
+      enabled   = false,
+      retention = { enabled = false, days = 0 }
+    }
+  }
+  default_metrics = {
+    "AllMetrics" = {
+      enabled   = false,
+      retention = { enabled = false, days = 0 }
+    }
+  }
 }
 
 resource "azurerm_virtual_network" "k8s_agent_network" {
@@ -227,14 +253,29 @@ resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {
   log_analytics_workspace_id = var.oms_workspace_id
 
   dynamic "log" {
-    for_each = local.diagnostics
+    for_each = merge(local.default_log_analytics, var.log_analytics)
 
     content {
-      category = log.value.category
+      category = log.key
+      enabled  = log.value.enabled
 
       retention_policy {
         enabled = log.value.retention.enabled
         days    = log.value.retention.days
+      }
+    }
+  }
+  dynamic "metric" {
+    #for_each = local.metrics
+    for_each = merge(local.default_metrics, var.metrics)
+
+    content {
+      category = metric.key
+      enabled  = metric.value.enabled
+
+      retention_policy {
+        enabled = metric.value.retention.enabled
+        days    = metric.value.retention.days
       }
     }
   }
