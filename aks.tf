@@ -87,47 +87,6 @@ locals {
       retention = { enabled = false, days = 0 }
     }
   }
-
-  #  log_diagnostics = [
-  #    {
-  #      category  = "kube-controller-manager",
-  #      retention = { enabled = false, days = 0 }
-  #    },
-  #    {
-  #      category  = "kube-apiserver",
-  #      retention = { enabled = false, days = 0 }
-  #    },
-  #    {
-  #      category  = "cluster-autoscaler",
-  #      retention = { enabled = false, days = 0 }
-  #    },
-  #    {
-  #      category  = "guard",
-  #      retention = { enabled = false, days = 0 }
-  #    },
-  #    {
-  #      category  = "kube-apiserver",
-  #      retention = { enabled = false, days = 0 }
-  #    },
-  #    {
-  #      category  = "kube-audit",
-  #      retention = { enabled = false, days = 0 }
-  #    },
-  #    {
-  #      category  = "kube-audit-admin",
-  #      retention = { enabled = false, days = 0 }
-  #    },
-  #    {
-  #      category  = "kube-scheduler",
-  #      retention = { enabled = false, days = 0 }
-  #    },
-  #  ]
-  #  metrics = [
-  #    {
-  #      category  = "AllMetrics",
-  #      retention = { enabled = false, days = 0 }
-  #    },
-  #  ]
 }
 
 resource "azurerm_virtual_network" "k8s_agent_network" {
@@ -294,20 +253,15 @@ resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {
   log_analytics_workspace_id = var.oms_workspace_id
 
   dynamic "log" {
-    #for_each = local.log_diagnostics
     for_each = merge(local.default_log_analytics, var.log_analytics)
 
     content {
-      #category = log.value.category
       category = log.key
-      #enabled  = coalesce(log.value.enabled, false)
-      enabled = log.value.enabled
+      enabled  = log.value.enabled
 
       retention_policy {
-        #enabled = coalesce(log.value.retention.enabled, false)
         enabled = log.value.retention.enabled
-        #days    = coalesce(log.value.retention.days, 0)
-        days = log.value.retention.days
+        days    = log.value.retention.days
       }
     }
   }
@@ -316,16 +270,12 @@ resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {
     for_each = merge(local.default_metrics, var.metrics)
 
     content {
-      #category = metric.value.category
       category = metric.key
-      #enabled  = coalesce(metric.value.enabled, false)
-      enabled = metric.value.enabled
+      enabled  = metric.value.enabled
 
       retention_policy {
-        #enabled = coalesce(metric.value.retention.enabled, false)
         enabled = metric.value.retention.enabled
-        #days    = coalesce(metric.value.retention.days, 0)
-        days = metric.value.retention.days
+        days    = metric.value.retention.days
       }
     }
   }
