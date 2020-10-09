@@ -202,3 +202,9 @@ variable "metrics" {
   }))
   default = {}
 }
+
+variable "private_cluster_enabled" {
+  type    = bool
+  default = false
+}
+

@@ -109,12 +109,12 @@ resource "azurerm_subnet" "k8s_agent_subnet" {
 }
 
 resource "azurerm_kubernetes_cluster" "k8s_cluster" {
-  name                = var.cluster_name
-  location            = var.resource_group_location
-  resource_group_name = var.resource_group_name
-  dns_prefix          = var.dns_prefix
-
-  kubernetes_version = var.k8s_version
+  name                    = var.cluster_name
+  location                = var.resource_group_location
+  resource_group_name     = var.resource_group_name
+  dns_prefix              = var.dns_prefix
+  private_cluster_enabled = var.private_cluster_enabled
+  kubernetes_version      = var.k8s_version
 
   linux_profile {
     admin_username = var.admin_username
