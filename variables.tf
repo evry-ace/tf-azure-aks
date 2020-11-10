@@ -208,3 +208,9 @@ variable "private_cluster_enabled" {
   default = false
 }
 
+variable "api_server_authorized_ip_ranges" {
+  type        = list(string)
+  default     = []
+  description = "List of IPs to whitelist for incoming to Kubernetes API"
+}
+
