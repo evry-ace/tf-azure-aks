@@ -213,6 +213,10 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
           log_analytics_workspace_id = var.oms_workspace_id
         }
       }
+
+      azure_policy {
+        enabled = var.azure_policy_enable
+      }
     }
   }
 
