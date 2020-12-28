@@ -214,3 +214,9 @@ variable "api_server_authorized_ip_ranges" {
   description = "List of IPs to whitelist for incoming to Kubernetes API"
 }
 
+variable "azure_policy_enable" {
+  type        = bool
+  default     = false
+  description = "Turn on Azure Policy in cluster or not"
+}
+
