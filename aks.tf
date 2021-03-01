@@ -132,7 +132,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     name                 = "default"
     node_count           = lookup(var.default_pool, "node_count", local.default_pool_settings.node_count)
     vm_size              = lookup(var.default_pool, "vm_size", local.default_pool_settings.vm_size)
-    os_disk_size_gb      = lookup(var.default_pool, "os_dize_size_gb", local.default_pool_settings.os_disk_size_gb)
+    os_disk_size_gb      = lookup(var.default_pool, "os_disk_size_gb", local.default_pool_settings.os_disk_size_gb)
     vnet_subnet_id       = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, [""]), 0) : var.aks_vnet_subnet_id
     availability_zones   = lookup(var.default_pool, "availability_zones", local.default_pool_settings.availability_zones)
     type                 = lookup(var.default_pool, "type", local.default_pool_settings.default_pool_type)
