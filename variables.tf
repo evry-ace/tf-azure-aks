@@ -97,7 +97,7 @@ variable "rbac_server_app_secret" {
 
 variable "rbac_admin_group_ids" {
   default = []
-  type    = list
+  type    = list(any)
 }
 
 #variable "rbac_tenant_id" {
@@ -111,22 +111,22 @@ variable "load_balancer_sku" {
 }
 
 variable "managed_outbound_ip_count" {
-  default = null
+  default = 1
   type    = number
 }
 
 variable "outbound_ip_address_ids" {
   default = null
-  type    = list
+  type    = list(any)
 }
 
 variable "outbound_ip_prefix_ids" {
   default = null
-  type    = list
+  type    = list(any)
 }
 
 variable "outbound_type" {
-  default = null
+  default = "loadBalancer"
   type    = string
 }
 
