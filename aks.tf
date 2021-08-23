@@ -187,7 +187,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     docker_bridge_cidr = var.aks_docker_bridge_cidr
 
     dynamic "load_balancer_profile" {
-      for_each = var.outbound_type == "loadbalancer" ? [1] : []
+      for_each = var.outbound_type == "loadBalancer" ? [1] : []
 
       content {
         managed_outbound_ip_count = var.managed_outbound_ip_count
