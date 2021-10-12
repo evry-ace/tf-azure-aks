@@ -116,6 +116,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   private_cluster_enabled         = var.private_cluster_enabled
   kubernetes_version              = var.k8s_version
   api_server_authorized_ip_ranges = var.api_server_authorized_ip_ranges
+  automatic_channel_upgrade       = var.automatic_channel_upgrade
 
   linux_profile {
     admin_username = var.admin_username

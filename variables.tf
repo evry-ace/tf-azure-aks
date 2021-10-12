@@ -220,3 +220,8 @@ variable "azure_policy_enable" {
   description = "Turn on Azure Policy in cluster or not"
 }
 
+variable "automatic_channel_upgrade" {
+  type    = string
+  default = "none"
+}
+
