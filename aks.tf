@@ -90,7 +90,7 @@ locals {
 }
 
 resource "azurerm_virtual_network" "k8s_agent_network" {
-  name                = "agent-net"
+  name                = var.agent_net_name 
   location            = var.resource_group_location
   resource_group_name = var.resource_group_name
   address_space       = [var.aks_vnet_subnet_cidr]

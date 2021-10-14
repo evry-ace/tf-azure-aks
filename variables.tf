@@ -14,6 +14,12 @@ variable "resource_group_location" {
 }
 
 ## AKS variables ##
+variable "agent_net_name" {
+  type        = string
+  description = "Optional name of the agent vnet"
+  default     = "agent-net"
+}
+
 variable "k8s_version" {
   description = "What version of k8s to request from provider"
   default     = "1.11.4"
