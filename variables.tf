@@ -228,6 +228,6 @@ variable "azure_policy_enable" {
 
 variable "automatic_channel_upgrade" {
   type    = string
-  default = "none"
+  default = null
 }
 
