@@ -22,13 +22,13 @@ locals {
   node_pools = {
     for p in var.node_pools :
     p.name => {
-      name               = p.name
-      node_count         = lookup(p, "node_count", local.default_pool_settings.node_count)
-      vm_size            = lookup(p, "vm_size", local.default_pool_settings.vm_size)
-      os_type            = lookup(p, "os_type", local.default_pool_settings.os_type)
-      os_disk_size_gb    = lookup(p, "os_disk_size_gb", local.default_pool_settings.os_disk_size_gb)
-      vnet_subnet_id     = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, [""]), 0) : var.aks_vnet_subnet_id
-      availability_zones = lookup(p, "availability_zones", local.default_pool_settings.availability_zones)
+      name            = p.name
+      node_count      = lookup(p, "node_count", local.default_pool_settings.node_count)
+      vm_size         = lookup(p, "vm_size", local.default_pool_settings.vm_size)
+      os_type         = lookup(p, "os_type", local.default_pool_settings.os_type)
+      os_disk_size_gb = lookup(p, "os_disk_size_gb", local.default_pool_settings.os_disk_size_gb)
+      vnet_subnet_id  = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, [""]), 0) : var.aks_vnet_subnet_id
+      zones           = lookup(p, "availability_zones", local.default_pool_settings.availability_zones)
 
       mode                = lookup(p, "mode", "User")
       enable_auto_scaling = lookup(p, "enable_auto_scaling", true)
@@ -90,7 +90,7 @@ locals {
 }
 
 resource "azurerm_virtual_network" "k8s_agent_network" {
-  name                = var.agent_net_name 
+  name                = var.agent_net_name
   location            = var.resource_group_location
   resource_group_name = var.resource_group_name
   address_space       = [var.aks_vnet_subnet_cidr]
@@ -135,7 +135,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     vm_size              = lookup(var.default_pool, "vm_size", local.default_pool_settings.vm_size)
     os_disk_size_gb      = lookup(var.default_pool, "os_disk_size_gb", local.default_pool_settings.os_disk_size_gb)
     vnet_subnet_id       = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, [""]), 0) : var.aks_vnet_subnet_id
-    availability_zones   = lookup(var.default_pool, "availability_zones", local.default_pool_settings.availability_zones)
+    zones                = lookup(var.default_pool, "availability_zones", local.default_pool_settings.availability_zones)
     type                 = lookup(var.default_pool, "type", local.default_pool_settings.default_pool_type)
     enable_auto_scaling  = lookup(var.default_pool, "enable_auto_scaling", true)
     min_count            = lookup(var.default_pool, "min_count", lookup(var.default_pool, "enable_auto_scaling", true) ? local.default_pool_settings.min_count : null)
@@ -162,18 +162,25 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     }
   }
 
-  role_based_access_control {
-    enabled = var.rbac_enable
-
-    azure_active_directory {
-      managed                = var.rbac_managed
+  dynamic "azure_active_directory_role_based_access_control" {
+    for_each = var.rbac_enable && var.rbac_managed ? [1] : []
+    content {
+      managed                = true
       admin_group_object_ids = var.rbac_admin_group_ids
-      client_app_id          = var.rbac_managed == false ? var.rbac_client_app_id : null
-      server_app_id          = var.rbac_managed == false ? var.rbac_server_app_id : null
-      server_app_secret      = var.rbac_managed == false ? var.rbac_server_app_secret : null
-      #use current subscription .. tenant_id = "${var.rbac_tenant_id}"
     }
   }
+
+  dynamic "azure_active_directory_role_based_access_control" {
+    for_each = var.rbac_enable && var.rbac_managed == false ? [1] : []
+    content {
+      managed           = false
+      client_app_id     = var.rbac_managed == false ? var.rbac_client_app_id : null
+      server_app_id     = var.rbac_managed == false ? var.rbac_server_app_id : null
+      server_app_secret = var.rbac_managed == false ? var.rbac_server_app_secret : null
+    }
+  }
+
+  azure_policy_enabled = var.azure_policy_enable
 
   network_profile {
     load_balancer_sku = var.load_balancer_sku
@@ -198,28 +205,44 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     }
   }
 
-  dynamic "addon_profile" {
-    for_each = [1]
+  dynamic "ingress_application_gateway" {
+    for_each = var.ingress_application_gateway_enable ? [1] : []
 
     content {
-      kube_dashboard {
-        enabled = false
-      }
-
-      dynamic "oms_agent" {
-        for_each = var.oms_agent_enable ? [1] : []
-
-        content {
-          enabled                    = var.oms_agent_enable
-          log_analytics_workspace_id = var.oms_workspace_id
-        }
-      }
-
-      azure_policy {
-        enabled = var.azure_policy_enable
-      }
+      gateway_id   = var.ingress_application_gateway_id
+      gateway_name = var.ingress_application_gateway_name
+      subnet_cidr  = var.ingress_application_gateway_subnet_cidr
+      subnet_id    = var.ingress_application_gateway_subnet_id
     }
   }
+
+  dynamic "key_vault_secrets_provider" {
+    for_each = var.key_vault_secrets_provider != null ? [1] : []
+
+    content {
+      secret_rotation_enabled  = var.key_vault_secrets_provider.secret_rotation_enabled
+      secret_rotation_interval = var.key_vault_secrets_provider.secret_rotation_interval
+    }
+  }
+
+  dynamic "kubelet_identity" {
+    for_each = var.kubelet_identity != null ? [1] : []
+
+    content {
+      client_id                 = var.kubelet_identity.client_id
+      object_id                 = var.kubelet_identity.object_id
+      user_assigned_identity_id = var.kubelet_identity.user_assigned_identity_id
+    }
+  }
+
+  dynamic "oms_agent" {
+    for_each = var.oms_agent_enable ? [1] : []
+
+    content {
+      log_analytics_workspace_id = var.oms_workspace_id
+    }
+  }
+
 
   tags = var.tags
 }
@@ -230,11 +253,11 @@ resource "azurerm_kubernetes_cluster_node_pool" "aks-node" {
   name                  = each.value.name
   kubernetes_cluster_id = azurerm_kubernetes_cluster.k8s_cluster.id
 
-  node_count         = each.value.node_count
-  vm_size            = each.value.vm_size
-  os_disk_size_gb    = each.value.os_disk_size_gb
-  vnet_subnet_id     = each.value.vnet_subnet_id
-  availability_zones = each.value.availability_zones
+  node_count      = each.value.node_count
+  vm_size         = each.value.vm_size
+  os_disk_size_gb = each.value.os_disk_size_gb
+  vnet_subnet_id  = each.value.vnet_subnet_id
+  zones           = each.value.availability_zones
 
   mode                = each.value.mode
   enable_auto_scaling = each.value.enable_auto_scaling

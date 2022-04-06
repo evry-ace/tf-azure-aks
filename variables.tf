@@ -231,3 +231,48 @@ variable "automatic_channel_upgrade" {
   default = null
 }
 
+# Ingress Application Gateway
+variable "ingress_application_gateway_enable" {
+  type    = bool
+  default = false
+}
+
+variable "ingress_application_gateway_name" {
+  type    = string
+  default = null
+}
+
+variable "ingress_application_subnet_id" {
+  type    = string
+  default = null
+}
+
+variable "ingress_application_subnet_cidr" {
+  type    = string
+  default = null
+}
+
+variable "key_vault_secrets_provider" {
+  type = map(object({
+    secret_rotation_enabled  = string
+    secret_rotation_interval = string
+  }))
+
+  default = null
+}
+
+variable "kubelet_identity" {
+  type = map(object({
+    client_id                 = string
+    object_id                 = string
+    user_assigned_idenitty_id = string
+  }))
+
+  default = null
+}
+
+
+variable "kubelet_identity_client_id" {
+  type    = string
+  default = null
+}
