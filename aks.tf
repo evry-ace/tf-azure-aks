@@ -1,22 +1,22 @@
 locals {
   default_pool_settings = {
-    name               = "default"
-    node_count         = 2
-    vm_size            = "Standard_D3_v2"
-    os_type            = "Linux"
-    os_disk_size_gb    = 50
-    default_pool_type  = "VirtualMachineScaleSets"
-    min_count          = 1
-    max_count          = 2
-    availability_zones = []
-    vnet_subnet_id     = var.aks_vnet_subnet_id
-    max_pods           = 30
-    priority           = "Regular"
-    eviction_policy    = "Delete"
-    k8s_version        = var.k8s_version
-    node_labels        = {}
-    node_taints        = []
-    spot_max_price     = -1
+    name              = "default"
+    node_count        = 2
+    vm_size           = "Standard_D3_v2"
+    os_type           = "Linux"
+    os_disk_size_gb   = 50
+    default_pool_type = "VirtualMachineScaleSets"
+    min_count         = 1
+    max_count         = 2
+    zones             = []
+    vnet_subnet_id    = var.aks_vnet_subnet_id
+    max_pods          = 30
+    priority          = "Regular"
+    eviction_policy   = "Delete"
+    k8s_version       = var.k8s_version
+    node_labels       = {}
+    node_taints       = []
+    spot_max_price    = -1
   }
 
   node_pools = {
@@ -28,7 +28,7 @@ locals {
       os_type         = lookup(p, "os_type", local.default_pool_settings.os_type)
       os_disk_size_gb = lookup(p, "os_disk_size_gb", local.default_pool_settings.os_disk_size_gb)
       vnet_subnet_id  = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, [""]), 0) : var.aks_vnet_subnet_id
-      zones           = lookup(p, "availability_zones", local.default_pool_settings.availability_zones)
+      zones           = lookup(p, "zones", local.default_pool_settings.zones)
 
       mode                = lookup(p, "mode", "User")
       enable_auto_scaling = lookup(p, "enable_auto_scaling", true)
@@ -135,7 +135,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     vm_size              = lookup(var.default_pool, "vm_size", local.default_pool_settings.vm_size)
     os_disk_size_gb      = lookup(var.default_pool, "os_disk_size_gb", local.default_pool_settings.os_disk_size_gb)
     vnet_subnet_id       = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, [""]), 0) : var.aks_vnet_subnet_id
-    zones                = lookup(var.default_pool, "availability_zones", local.default_pool_settings.availability_zones)
+    zones                = lookup(var.default_pool, "zones", local.default_pool_settings.zones)
     type                 = lookup(var.default_pool, "type", local.default_pool_settings.default_pool_type)
     enable_auto_scaling  = lookup(var.default_pool, "enable_auto_scaling", true)
     min_count            = lookup(var.default_pool, "min_count", lookup(var.default_pool, "enable_auto_scaling", true) ? local.default_pool_settings.min_count : null)
@@ -257,7 +257,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "aks-node" {
   vm_size         = each.value.vm_size
   os_disk_size_gb = each.value.os_disk_size_gb
   vnet_subnet_id  = each.value.vnet_subnet_id
-  zones           = each.value.availability_zones
+  zones           = each.value.zones
 
   mode                = each.value.mode
   enable_auto_scaling = each.value.enable_auto_scaling
