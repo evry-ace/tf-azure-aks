@@ -126,6 +126,8 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     }
   }
 
+  oidc_issuer_enabled = var.oidc_issuer_enabled
+
   node_resource_group = var.node_resource_group
 
   #if No aks_vnet_subnet_id is passed THEN use newly created subnet id ELSE use PASSED subnet id

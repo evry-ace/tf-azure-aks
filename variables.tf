@@ -172,6 +172,9 @@ variable "create_vnet" {
   default = true
 }
 
+variable "oidc_issuer_enabled" {
+  default = false
+}
 variable "oms_workspace_id" {
   description = "Operations Management Suite Workspace ID"
   default     = ""
