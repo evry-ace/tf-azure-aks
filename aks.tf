@@ -132,7 +132,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
 
   #if No aks_vnet_subnet_id is passed THEN use newly created subnet id ELSE use PASSED subnet id
   default_node_pool {
-    name                 = "default"
+    name                 = lookup(var.default_pool, "name", "default")
     node_count           = lookup(var.default_pool, "node_count", local.default_pool_settings.node_count)
     vm_size              = lookup(var.default_pool, "vm_size", local.default_pool_settings.vm_size)
     os_disk_size_gb      = lookup(var.default_pool, "os_disk_size_gb", local.default_pool_settings.os_disk_size_gb)
