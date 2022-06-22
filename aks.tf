@@ -5,6 +5,7 @@ locals {
     vm_size           = "Standard_D3_v2"
     os_type           = "Linux"
     os_disk_size_gb   = 50
+    os_disk_type      = "Ephemeral"
     default_pool_type = "VirtualMachineScaleSets"
     min_count         = 1
     max_count         = 2
@@ -27,6 +28,7 @@ locals {
       vm_size         = lookup(p, "vm_size", local.default_pool_settings.vm_size)
       os_type         = lookup(p, "os_type", local.default_pool_settings.os_type)
       os_disk_size_gb = lookup(p, "os_disk_size_gb", local.default_pool_settings.os_disk_size_gb)
+      os_disk_type    = lookup(p, "os_disk_type", local.default_pool_settings.os_disk_type)
       vnet_subnet_id  = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, [""]), 0) : var.aks_vnet_subnet_id
       zones           = lookup(p, "zones", local.default_pool_settings.zones)
 
@@ -136,6 +138,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     node_count           = lookup(var.default_pool, "node_count", local.default_pool_settings.node_count)
     vm_size              = lookup(var.default_pool, "vm_size", local.default_pool_settings.vm_size)
     os_disk_size_gb      = lookup(var.default_pool, "os_disk_size_gb", local.default_pool_settings.os_disk_size_gb)
+    os_disk_type         = lookup(var.default_pool, "os_disk_type", local.default_pool_settings.os_disk_type)
     vnet_subnet_id       = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, [""]), 0) : var.aks_vnet_subnet_id
     zones                = lookup(var.default_pool, "zones", local.default_pool_settings.zones)
     type                 = lookup(var.default_pool, "type", local.default_pool_settings.default_pool_type)
