@@ -75,6 +75,11 @@ variable "identity_type" {
   default = "SystemAssigned"
 }
 
+variable "identity_ids" {
+  type    = list(string)
+  default = []
+}
+
 ## RBAC variables ##
 variable "rbac_enable" {
   description = "Should RBAC be enabled."
@@ -215,6 +220,11 @@ variable "metrics" {
 variable "private_cluster_enabled" {
   type    = bool
   default = false
+}
+
+variable "private_dns_zone_id" {
+  type    = string
+  default = null
 }
 
 variable "api_server_authorized_ip_ranges" {
