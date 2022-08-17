@@ -116,6 +116,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   resource_group_name             = var.resource_group_name
   dns_prefix                      = var.dns_prefix
   private_cluster_enabled         = var.private_cluster_enabled
+  private_dns_zone_id             = var.private_dns_zone_id
   kubernetes_version              = var.k8s_version
   api_server_authorized_ip_ranges = var.api_server_authorized_ip_ranges
   automatic_channel_upgrade       = var.automatic_channel_upgrade
@@ -163,7 +164,8 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     for_each = var.identity_type != "SP" ? [1] : []
 
     content {
-      type = var.identity_type
+      type         = var.identity_type
+      identity_ids = var.identity_ids
     }
   }
 
