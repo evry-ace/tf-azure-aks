@@ -275,17 +275,11 @@ variable "key_vault_secrets_provider" {
 }
 
 variable "kubelet_identity" {
-  type = map(object({
+  type = object({
     client_id                 = string
     object_id                 = string
-    user_assigned_idenitty_id = string
-  }))
+    user_assigned_identity_id = string
+  })
 
-  default = null
-}
-
-
-variable "kubelet_identity_client_id" {
-  type    = string
   default = null
 }
