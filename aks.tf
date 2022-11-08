@@ -54,35 +54,38 @@ locals {
       enabled   = false,
       retention = { enabled = false, days = 0 }
     }
+
     "kube-apiserver" = {
       enabled   = false,
       retention = { enabled = false, days = 0 }
     }
+
     "cluster-autoscaler" = {
       enabled   = false,
       retention = { enabled = false, days = 0 }
     }
+
     "guard" = {
       enabled   = false,
       retention = { enabled = false, days = 0 }
     }
-    "kube-apiserver" = {
-      enabled   = false,
-      retention = { enabled = false, days = 0 }
-    }
+
     "kube-audit" = {
       enabled   = false,
       retention = { enabled = false, days = 0 }
     }
+
     "kube-audit-admin" = {
       enabled   = false,
       retention = { enabled = false, days = 0 }
     }
+
     "kube-scheduler" = {
       enabled   = false,
       retention = { enabled = false, days = 0 }
     }
   }
+
   default_metrics = {
     "AllMetrics" = {
       enabled   = false,
@@ -130,6 +133,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   }
 
   oidc_issuer_enabled = var.oidc_issuer_enabled
+  workload_identity_enabled = var.workload_identity_enabled
 
   node_resource_group = var.node_resource_group
 

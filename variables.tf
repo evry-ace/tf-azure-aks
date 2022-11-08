@@ -80,6 +80,28 @@ variable "identity_ids" {
   default = []
 }
 
+
+# Identity / RBAC goes here
+variable "kubelet_identity" {
+  type = object({
+    client_id                 = string
+    object_id                 = string
+    user_assigned_identity_id = string
+  })
+
+  default = null
+}
+
+variable "oidc_issuer_enabled" {
+  type = bool
+  default = false
+}
+
+variable "workload_identity_enabled" {
+  type = bool
+  default = false
+}
+
 ## RBAC variables ##
 variable "rbac_enable" {
   description = "Should RBAC be enabled."
@@ -177,9 +199,6 @@ variable "create_vnet" {
   default = true
 }
 
-variable "oidc_issuer_enabled" {
-  default = false
-}
 variable "oms_workspace_id" {
   description = "Operations Management Suite Workspace ID"
   default     = ""
@@ -270,16 +289,6 @@ variable "key_vault_secrets_provider" {
     secret_rotation_enabled  = string
     secret_rotation_interval = string
   }))
-
-  default = null
-}
-
-variable "kubelet_identity" {
-  type = object({
-    client_id                 = string
-    object_id                 = string
-    user_assigned_identity_id = string
-  })
 
   default = null
 }
