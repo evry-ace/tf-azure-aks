@@ -83,3 +83,6 @@ output "private_fqdn" {
   value = azurerm_kubernetes_cluster.k8s_cluster.private_fqdn
 }
 
+output "oidc_issuer_url" {
+  value = azurerm_kubernetes_cluster.k8s_cluster.oidc_issuer_url
+}
