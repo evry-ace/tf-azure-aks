@@ -114,15 +114,15 @@ resource "azurerm_subnet" "k8s_agent_subnet" {
 }
 
 resource "azurerm_kubernetes_cluster" "k8s_cluster" {
-  name                            = var.cluster_name
-  location                        = var.resource_group_location
-  resource_group_name             = var.resource_group_name
-  dns_prefix                      = var.dns_prefix
-  private_cluster_enabled         = var.private_cluster_enabled
-  private_dns_zone_id             = var.private_dns_zone_id
-  kubernetes_version              = var.k8s_version
-  api_server_authorized_ip_ranges = var.api_server_authorized_ip_ranges
-  automatic_channel_upgrade       = var.automatic_channel_upgrade
+  name                      = var.cluster_name
+  location                  = var.resource_group_location
+  resource_group_name       = var.resource_group_name
+  dns_prefix                = var.dns_prefix
+  private_cluster_enabled   = var.private_cluster_enabled
+  private_dns_zone_id       = var.private_dns_zone_id
+  kubernetes_version        = var.k8s_version
+  authorized_ip_ranges      = var.api_server_authorized_ip_ranges
+  automatic_channel_upgrade = var.automatic_channel_upgrade
 
   linux_profile {
     admin_username = var.admin_username
@@ -132,7 +132,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     }
   }
 
-  oidc_issuer_enabled = var.oidc_issuer_enabled
+  oidc_issuer_enabled       = var.oidc_issuer_enabled
   workload_identity_enabled = var.workload_identity_enabled
 
   node_resource_group = var.node_resource_group

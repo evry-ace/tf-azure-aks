@@ -93,12 +93,12 @@ variable "kubelet_identity" {
 }
 
 variable "oidc_issuer_enabled" {
-  type = bool
+  type    = bool
   default = false
 }
 
 variable "workload_identity_enabled" {
-  type = bool
+  type    = bool
   default = false
 }
 
