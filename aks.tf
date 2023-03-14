@@ -256,7 +256,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
 
   lifecycle {
     ignore_changes = [
-      default_node_pool.node_count,
+      default_node_pool["node_count"],
     ]
   }
 
