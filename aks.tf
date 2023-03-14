@@ -254,6 +254,11 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     }
   }
 
+  lifecycle {
+    ignore_changes = [
+      default_node_pool.node_count,
+    ]
+  }
 
   tags = var.tags
 }
@@ -288,6 +293,8 @@ resource "azurerm_kubernetes_cluster_node_pool" "aks-node" {
   lifecycle {
     ignore_changes = [
       node_taints,
+      node_labels,
+      node_count,
     ]
   }
 }
