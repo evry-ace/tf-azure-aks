@@ -284,6 +284,12 @@ resource "azurerm_kubernetes_cluster_node_pool" "aks-node" {
   priority        = each.value.priority
   eviction_policy = each.value.eviction_policy
   spot_max_price  = each.value.spot_max_price
+
+  lifecycle {
+    ignore_changes = [
+      node_taints,
+    ]
+  }
 }
 
 resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {
