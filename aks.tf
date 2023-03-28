@@ -153,6 +153,10 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     tags                 = lookup(var.default_pool, "tags", var.tags)
     max_pods             = lookup(var.default_pool, "max_pods", local.default_pool_settings.max_pods)
     orchestrator_version = lookup(var.default_pool, "k8s_version", local.default_pool_settings.k8s_version)
+    priority             = lookup(var.default_pool, "priority", local.default_pool_settings.priority)
+    eviction_policy      = lookup(var.default_pool, "eviction_policy", local.default_pool_settings.eviction_policy)
+    spot_max_price       = lookup(var.default_pool, "spot_max_price", local.default_pool_settings.spot_max_price)
+
   }
 
   dynamic "service_principal" {
