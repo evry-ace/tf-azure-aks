@@ -333,3 +333,11 @@ resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {
     }
   }
 }
+
+#TODO Make optional
+resource "azurerm_kubernetes_cluster_extension" "flux" {
+  name           = "flux"
+  cluster_id     = azurerm_kubernetes_cluster.k8s_cluster.id
+  extension_type = "microsoft.flux"
+}
+
