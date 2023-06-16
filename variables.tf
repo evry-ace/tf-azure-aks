@@ -292,3 +292,14 @@ variable "key_vault_secrets_provider" {
 
   default = null
 }
+
+variable "enable_flux_extension" {
+  type    = bool
+  default = false
+}
+
+variable "flux_configuration_settings" {
+  type    = map(string)
+  default = {}
+}
+

@@ -334,10 +334,11 @@ resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {
   }
 }
 
-#TODO Make optional
 resource "azurerm_kubernetes_cluster_extension" "flux" {
-  name           = "flux"
-  cluster_id     = azurerm_kubernetes_cluster.k8s_cluster.id
-  extension_type = "microsoft.flux"
+  count                  = var.enable_flux_extension ? 1 : 0
+  name                   = "flux"
+  cluster_id             = azurerm_kubernetes_cluster.k8s_cluster.id
+  extension_type         = "microsoft.flux"
+  configuration_settings = var.flux_configuration_settings
 }
 
