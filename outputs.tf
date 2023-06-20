@@ -90,3 +90,8 @@ output "fqdn" {
 output "oidc_issuer_url" {
   value = azurerm_kubernetes_cluster.k8s_cluster.oidc_issuer_url
 }
+
+output "secret_identity" {
+  value = azurerm_kubernetes_cluster.k8s_cluster.key_vault_secrets_provider.secret_identity
+}
+
