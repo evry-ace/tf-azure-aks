@@ -209,6 +209,16 @@ variable "oms_agent_enable" {
   default     = true
 }
 
+variable "msd_workspace_id" {
+  description = "Specifies the ID of the Log Analytics Workspace where the audit logs collected by Microsoft Defender should be sent to"
+  default     = ""
+}
+
+variable "msd_enable" {
+  description = "Enable audit logs collected by Microsoft Defender"
+  default     = true
+}
+
 variable "enable_diagnostics" {
   default = false
   type    = bool

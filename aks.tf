@@ -246,6 +246,14 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     }
   }
 
+  dynamic "microsoft_defender" {
+    for_each = var.msd_enable ? [1] : []
+
+    content {
+      log_analytics_workspace_id = var.msd_workspace_id
+    }
+  }
+
   dynamic "oms_agent" {
     for_each = var.oms_agent_enable ? [1] : []
 
@@ -256,6 +264,21 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
 
 
   tags = var.tags
+
+  #  dynamic "lifecycle" {
+  #    for_each = lookup(var.default_pool, "enable_auto_scaling", true) ? [1] : []
+  #
+  #    content { 
+  #      ignore_changes = [tags,]
+  #    }
+  #  }
+  #  lifecycle {
+  #    ignore_changes = [
+  #      # Ignore changes to default_node_pools node_count , e.g. because it is managed by enable_auto_scaling
+  #      default_node_pool[0].node_count,
+  #    ]
+  #  }
+
 }
 
 resource "azurerm_kubernetes_cluster_node_pool" "aks-node" {
@@ -284,6 +307,13 @@ resource "azurerm_kubernetes_cluster_node_pool" "aks-node" {
   priority        = each.value.priority
   eviction_policy = each.value.eviction_policy
   spot_max_price  = each.value.spot_max_price
+
+  lifecycle {
+    ignore_changes = [
+      # Ignore changes to default_node_pools node_count , e.g. because it is managed by enable_auto_scaling
+      node_count,
+    ]
+  }
 }
 
 resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {

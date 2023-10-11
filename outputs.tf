@@ -86,3 +86,8 @@ output "private_fqdn" {
 output "oidc_issuer_url" {
   value = azurerm_kubernetes_cluster.k8s_cluster.oidc_issuer_url
 }
+
+output "node_resource_group" {
+  description = "auto-generated resource group which contains the resources for this managed kubernetes cluster"
+  value       = azurerm_kubernetes_cluster.k8s_cluster.node_resource_group
+}
