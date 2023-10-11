@@ -67,7 +67,7 @@ No modules.
 | <a name="input_managed_outbound_ip_count"></a> [managed\_outbound\_ip\_count](#input\_managed\_outbound\_ip\_count) | n/a | `number` | `1` | no |
 | <a name="input_max_pods"></a> [max\_pods](#input\_max\_pods) | Max pods to support in this cluster pr node | `number` | `30` | no |
 | <a name="input_metrics"></a> [metrics](#input\_metrics) | n/a | <pre>map(object({<br>    enabled = bool<br>    retention = object({<br>      enabled = bool<br>      days    = number<br>    })<br>  }))</pre> | `{}` | no |
-| <a name="input_msd_enable"></a> [msd\_enable](#input\_msd\_enable) | Enable audit logs collected by Microsoft Defender | `bool` | `true` | no |
+| <a name="input_msd_enable"></a> [msd\_enable](#input\_msd\_enable) | Enable audit logs collected by Microsoft Defender | `bool` | `false` | no |
 | <a name="input_msd_workspace_id"></a> [msd\_workspace\_id](#input\_msd\_workspace\_id) | Specifies the ID of the Log Analytics Workspace where the audit logs collected by Microsoft Defender should be sent to | `string` | `""` | no |
 | <a name="input_node_pools"></a> [node\_pools](#input\_node\_pools) | Node pools to use | `list` | `[]` | no |
 | <a name="input_node_resource_group"></a> [node\_resource\_group](#input\_node\_resource\_group) | n/a | `any` | `null` | no |
