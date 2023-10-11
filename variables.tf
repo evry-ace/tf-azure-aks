@@ -215,8 +215,9 @@ variable "msd_workspace_id" {
 }
 
 variable "msd_enable" {
+  type        = bool
   description = "Enable audit logs collected by Microsoft Defender"
-  default     = true
+  default     = false
 }
 
 variable "enable_diagnostics" {
