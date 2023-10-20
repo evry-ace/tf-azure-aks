@@ -114,15 +114,17 @@ resource "azurerm_subnet" "k8s_agent_subnet" {
 }
 
 resource "azurerm_kubernetes_cluster" "k8s_cluster" {
-  name                            = var.cluster_name
-  location                        = var.resource_group_location
-  resource_group_name             = var.resource_group_name
-  dns_prefix                      = var.dns_prefix
-  private_cluster_enabled         = var.private_cluster_enabled
-  private_dns_zone_id             = var.private_dns_zone_id
-  kubernetes_version              = var.k8s_version
-  api_server_authorized_ip_ranges = var.api_server_authorized_ip_ranges
-  automatic_channel_upgrade       = var.automatic_channel_upgrade
+  name                    = var.cluster_name
+  location                = var.resource_group_location
+  resource_group_name     = var.resource_group_name
+  dns_prefix              = var.dns_prefix
+  private_cluster_enabled = var.private_cluster_enabled
+  private_dns_zone_id     = var.private_dns_zone_id
+  kubernetes_version      = var.k8s_version
+  api_server_access_profile {
+    authorized_ip_ranges = var.api_server_authorized_ip_ranges
+  }
+  automatic_channel_upgrade = var.automatic_channel_upgrade
 
   linux_profile {
     admin_username = var.admin_username
@@ -203,7 +205,6 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     pod_cidr           = var.aks_pod_cidr
     service_cidr       = var.aks_service_cidr
     dns_service_ip     = var.aks_dns_service_ip
-    docker_bridge_cidr = var.aks_docker_bridge_cidr
 
     dynamic "load_balancer_profile" {
       for_each = var.outbound_type == "loadBalancer" ? [1] : []
