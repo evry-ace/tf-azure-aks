@@ -121,8 +121,11 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   private_cluster_enabled = var.private_cluster_enabled
   private_dns_zone_id     = var.private_dns_zone_id
   kubernetes_version      = var.k8s_version
-  api_server_access_profile {
-    authorized_ip_ranges = var.api_server_authorized_ip_ranges
+  dynamic "api_server_access_profile" {
+    for_each = length(var.api_server_authorized_ip_ranges) != 0 ? [1] : []
+    content {
+      authorized_ip_ranges = var.api_server_authorized_ip_ranges
+    }
   }
   automatic_channel_upgrade = var.automatic_channel_upgrade
 
