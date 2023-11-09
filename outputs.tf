@@ -83,6 +83,15 @@ output "private_fqdn" {
   value = azurerm_kubernetes_cluster.k8s_cluster.private_fqdn
 }
 
+output "fqdn" {
+  value = azurerm_kubernetes_cluster.k8s_cluster.fqdn
+}
+
 output "oidc_issuer_url" {
   value = azurerm_kubernetes_cluster.k8s_cluster.oidc_issuer_url
 }
+
+output "secret_identity" {
+  value = azurerm_kubernetes_cluster.k8s_cluster.key_vault_secrets_provider[0].secret_identity
+}
+

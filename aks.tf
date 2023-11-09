@@ -254,6 +254,11 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     }
   }
 
+  lifecycle {
+    ignore_changes = [
+      default_node_pool["node_count"],
+    ]
+  }
 
   tags = var.tags
 }
@@ -284,6 +289,14 @@ resource "azurerm_kubernetes_cluster_node_pool" "aks-node" {
   priority        = each.value.priority
   eviction_policy = each.value.eviction_policy
   spot_max_price  = each.value.spot_max_price
+
+  lifecycle {
+    ignore_changes = [
+      node_taints,
+      node_labels,
+      node_count,
+    ]
+  }
 }
 
 resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {
@@ -320,3 +333,12 @@ resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {
     }
   }
 }
+
+resource "azurerm_kubernetes_cluster_extension" "flux" {
+  count                  = var.enable_flux_extension ? 1 : 0
+  name                   = "flux"
+  cluster_id             = azurerm_kubernetes_cluster.k8s_cluster.id
+  extension_type         = "microsoft.flux"
+  configuration_settings = var.flux_configuration_settings
+}
+

@@ -285,10 +285,21 @@ variable "ingress_application_subnet_cidr" {
 }
 
 variable "key_vault_secrets_provider" {
-  type = map(object({
+  type = object({
     secret_rotation_enabled  = string
     secret_rotation_interval = string
-  }))
+  })
 
   default = null
 }
+
+variable "enable_flux_extension" {
+  type    = bool
+  default = false
+}
+
+variable "flux_configuration_settings" {
+  type    = map(string)
+  default = {}
+}
+
