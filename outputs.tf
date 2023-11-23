@@ -91,3 +91,8 @@ output "node_resource_group" {
   description = "auto-generated resource group which contains the resources for this managed kubernetes cluster"
   value       = azurerm_kubernetes_cluster.k8s_cluster.node_resource_group
 }
+
+output "node_resource_group_id" {
+  description = "auto-generated resource group which contains the resources for this managed kubernetes cluster"
+  value       = azurerm_kubernetes_cluster.k8s_cluster.node_resource_group_id
+}
