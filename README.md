@@ -111,6 +111,7 @@ No modules.
 | <a name="output_name"></a> [name](#output\_name) | Re-export the AKS name for usage |
 | <a name="output_network_profile"></a> [network\_profile](#output\_network\_profile) | n/a |
 | <a name="output_node_resource_group"></a> [node\_resource\_group](#output\_node\_resource\_group) | auto-generated resource group which contains the resources for this managed kubernetes cluster |
+| <a name="output_node_resource_group_id"></a> [node\_resource\_group\_id](#output\_node\_resource\_group\_id) | auto-generated resource group which contains the resources for this managed kubernetes cluster |
 | <a name="output_oidc_issuer_url"></a> [oidc\_issuer\_url](#output\_oidc\_issuer\_url) | n/a |
 | <a name="output_private_fqdn"></a> [private\_fqdn](#output\_private\_fqdn) | n/a |
 <!-- END_TF_DOCS -->
