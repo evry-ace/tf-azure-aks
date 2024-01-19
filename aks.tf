@@ -29,7 +29,7 @@ locals {
       os_type         = lookup(p, "os_type", local.default_pool_settings.os_type)
       os_disk_size_gb = lookup(p, "os_disk_size_gb", local.default_pool_settings.os_disk_size_gb)
       os_disk_type    = lookup(p, "os_disk_type", local.default_pool_settings.os_disk_type)
-      vnet_subnet_id  = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, [""]), 0) : var.aks_vnet_subnet_id
+      vnet_subnet_id  = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet[*].id, [""]), 0) : var.aks_vnet_subnet_id
       zones           = lookup(p, "zones", local.default_pool_settings.zones)
 
       mode                = lookup(p, "mode", "User")
@@ -140,6 +140,8 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   oidc_issuer_enabled       = var.oidc_issuer_enabled
   workload_identity_enabled = var.workload_identity_enabled
 
+  role_based_access_control_enabled = true
+
   node_resource_group = var.node_resource_group
 
   #if No aks_vnet_subnet_id is passed THEN use newly created subnet id ELSE use PASSED subnet id
@@ -149,7 +151,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     vm_size              = lookup(var.default_pool, "vm_size", local.default_pool_settings.vm_size)
     os_disk_size_gb      = lookup(var.default_pool, "os_disk_size_gb", local.default_pool_settings.os_disk_size_gb)
     os_disk_type         = lookup(var.default_pool, "os_disk_type", local.default_pool_settings.os_disk_type)
-    vnet_subnet_id       = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, [""]), 0) : var.aks_vnet_subnet_id
+    vnet_subnet_id       = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet[*].id, [""]), 0) : var.aks_vnet_subnet_id
     zones                = lookup(var.default_pool, "zones", local.default_pool_settings.zones)
     type                 = lookup(var.default_pool, "type", local.default_pool_settings.default_pool_type)
     enable_auto_scaling  = lookup(var.default_pool, "enable_auto_scaling", true)
@@ -205,9 +207,9 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     network_plugin = var.aks_network_plugin
     network_policy = var.aks_network_policy
 
-    pod_cidr           = var.aks_pod_cidr
-    service_cidr       = var.aks_service_cidr
-    dns_service_ip     = var.aks_dns_service_ip
+    pod_cidr       = var.aks_pod_cidr
+    service_cidr   = var.aks_service_cidr
+    dns_service_ip = var.aks_dns_service_ip
 
     dynamic "load_balancer_profile" {
       for_each = var.outbound_type == "loadBalancer" ? [1] : []
