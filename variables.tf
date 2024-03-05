@@ -274,6 +274,32 @@ variable "automatic_channel_upgrade" {
   default = null
 }
 
+variable "node_os_channel_upgrade" {
+  type = string
+  default = "NodeImage"
+  description = "automatically upgrades the node image to the latest version available."
+}
+
+variable "max_surge" {
+  type = string
+  default = "30"
+  description = "The maximum percentage of nodes which will be added to the Node Pool size during an upgrade"
+}
+
+variable "schedule" {
+  description = "Schedule configuration for your resource"
+  type        = map(any)
+  default     = {
+    relativeMonthly = {
+      intervalMonths = 2,
+      dayOfWeek      = "Monday",
+      weekIndex      = "Last",
+      startTime      = "04:00",  # Default start time
+      utcOffset      = "+01:00"  # Default UTC offset
+    }
+  }
+}
+
 # Ingress Application Gateway
 variable "ingress_application_gateway_enable" {
   type    = bool

@@ -129,6 +129,34 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   }
   automatic_channel_upgrade = var.automatic_channel_upgrade
 
+  maintenance_window = true
+
+  maintenance_window_auto_upgrade {
+    schedule = {
+      intervalMonths = var.schedule.relativeMonthly.intervalMonths
+      dayOfWeek      = var.schedule.relativeMonthly.dayOfWeek
+      weekIndex      = var.schedule.relativeMonthly.weekIndex
+      startTime      = var.schedule.relativeMonthly.startTime
+      utcOffset      = var.schedule.relativeMonthly.utcOffset
+    }
+  }
+
+  node_os_channel_upgrade = var.node_os_channel_upgrade
+  
+  maintenance_window_node_os {
+    schedule = {
+      intervalMonths = var.schedule.relativeMonthly.intervalMonths
+      dayOfWeek      = var.schedule.relativeMonthly.dayOfWeek
+      weekIndex      = var.schedule.relativeMonthly.weekIndex
+      startTime      = var.schedule.relativeMonthly.startTime
+      utcOffset      = var.schedule.relativeMonthly.utcOffset
+    }
+  }
+
+  upgrade_settings {
+    max_surge = var.max_surge
+  }
+
   linux_profile {
     admin_username = var.admin_username
 
