@@ -66,9 +66,11 @@ No modules.
 | <a name="input_log_analytics"></a> [log\_analytics](#input\_log\_analytics) | Diagnostics | <pre>map(object({<br>    enabled = bool<br>    retention = object({<br>      enabled = bool<br>      days    = number<br>    })<br>  }))</pre> | `{}` | no |
 | <a name="input_managed_outbound_ip_count"></a> [managed\_outbound\_ip\_count](#input\_managed\_outbound\_ip\_count) | n/a | `number` | `1` | no |
 | <a name="input_max_pods"></a> [max\_pods](#input\_max\_pods) | Max pods to support in this cluster pr node | `number` | `30` | no |
+| <a name="input_max_surge"></a> [max\_surge](#input\_max\_surge) | The maximum percentage of nodes which will be added to the Node Pool size during an upgrade | `string` | `"30"` | no |
 | <a name="input_metrics"></a> [metrics](#input\_metrics) | n/a | <pre>map(object({<br>    enabled = bool<br>    retention = object({<br>      enabled = bool<br>      days    = number<br>    })<br>  }))</pre> | `{}` | no |
 | <a name="input_msd_enable"></a> [msd\_enable](#input\_msd\_enable) | Enable audit logs collected by Microsoft Defender | `bool` | `false` | no |
 | <a name="input_msd_workspace_id"></a> [msd\_workspace\_id](#input\_msd\_workspace\_id) | Specifies the ID of the Log Analytics Workspace where the audit logs collected by Microsoft Defender should be sent to | `string` | `""` | no |
+| <a name="input_node_os_channel_upgrade"></a> [node\_os\_channel\_upgrade](#input\_node\_os\_channel\_upgrade) | automatically upgrades the node image to the latest version available. | `string` | `"NodeImage"` | no |
 | <a name="input_node_pools"></a> [node\_pools](#input\_node\_pools) | Node pools to use | `list` | `[]` | no |
 | <a name="input_node_resource_group"></a> [node\_resource\_group](#input\_node\_resource\_group) | n/a | `any` | `null` | no |
 | <a name="input_oidc_issuer_enabled"></a> [oidc\_issuer\_enabled](#input\_oidc\_issuer\_enabled) | n/a | `bool` | `false` | no |
@@ -87,6 +89,7 @@ No modules.
 | <a name="input_rbac_server_app_secret"></a> [rbac\_server\_app\_secret](#input\_rbac\_server\_app\_secret) | The Client Secret of an Azure Active Directory Application | `any` | `null` | no |
 | <a name="input_resource_group_location"></a> [resource\_group\_location](#input\_resource\_group\_location) | Location of the RG the environment will run inside | `string` | `"West Europe"` | no |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | Name of RG the environment will run inside | `any` | n/a | yes |
+| <a name="input_schedule"></a> [schedule](#input\_schedule) | Schedule configuration for your resource | `map(any)` | <pre>{<br>  "relativeMonthly": {<br>    "dayOfWeek": "Monday",<br>    "intervalMonths": 2,<br>    "startTime": "04:00",<br>    "utcOffset": "+01:00",<br>    "weekIndex": "Last"<br>  }<br>}</pre> | no |
 | <a name="input_ssh_public_key"></a> [ssh\_public\_key](#input\_ssh\_public\_key) | public key to add to admin\_user in VMs | `any` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | # Metadata ## | `map` | `{}` | no |
 | <a name="input_workload_identity_enabled"></a> [workload\_identity\_enabled](#input\_workload\_identity\_enabled) | n/a | `bool` | `false` | no |
