@@ -22,7 +22,7 @@ variable "agent_net_name" {
 
 variable "k8s_version" {
   description = "What version of k8s to request from provider"
-  default     = "1.11.4"
+  default     = null
 }
 
 variable "cluster_name" {
@@ -209,6 +209,17 @@ variable "oms_agent_enable" {
   default     = true
 }
 
+variable "msd_workspace_id" {
+  description = "Specifies the ID of the Log Analytics Workspace where the audit logs collected by Microsoft Defender should be sent to"
+  default     = ""
+}
+
+variable "msd_enable" {
+  type        = bool
+  description = "Enable audit logs collected by Microsoft Defender"
+  default     = false
+}
+
 variable "enable_diagnostics" {
   default = false
   type    = bool
@@ -263,6 +274,113 @@ variable "automatic_channel_upgrade" {
   default = null
 }
 
+variable "node_os_channel_upgrade" {
+  type        = string
+  default     = "None"
+  description = "automatically upgrades the node image to the latest version available."
+}
+
+variable "max_surge" {
+  type        = string
+  default     = "33%"
+  description = "The maximum percentage of nodes which will be added to the Node Pool size during an upgrade"
+}
+
+variable "frequency" {
+  description = "Frequency of maintenance."
+  type        = string
+  default     = "Weekly"
+}
+
+variable "interval" {
+  description = "The interval for maintenance runs."
+  type        = number
+  default     = 1
+}
+
+variable "duration" {
+  description = "The duration of the window for maintenance to run in hours."
+  type        = string
+  default     = "5"
+}
+
+variable "day_of_week" {
+  description = "The day of the week for the maintenance run."
+  type        = string
+  default     = "Tuesday"
+}
+
+variable "maintenance_window_auto_upgrade" {
+  type = object({
+    day_of_month = optional(number)
+    day_of_week  = optional(string)
+    duration     = number
+    frequency    = string
+    interval     = number
+    start_date   = optional(string)
+    start_time   = optional(string)
+    utc_offset   = optional(string)
+    week_index   = optional(string)
+    not_allowed = optional(map(object({
+      end   = string
+      start = string
+    })))
+  })
+  default     = null
+  description = <<-EOT
+ - `day_of_month` - (Optional) The day of the month for the maintenance run. Required in combination with RelativeMonthly frequency. Value between 0 and 31 (inclusive).
+ - `day_of_week` - (Optional) The day of the week for the maintenance run. Options are `Monday`, `Tuesday`, `Wednesday`, `Thurday`, `Friday`, `Saturday` and `Sunday`. Required in combination with weekly frequency.
+ - `duration` - (Required) The duration of the window for maintenance to run in hours.
+ - `frequency` - (Required) Frequency of maintenance. Possible options are `Weekly`, `AbsoluteMonthly` and `RelativeMonthly`.
+ - `interval` - (Required) The interval for maintenance runs. Depending on the frequency this interval is week or month based.
+ - `start_date` - (Optional) The date on which the maintenance window begins to take effect.
+ - `start_time` - (Optional) The time for maintenance to begin, based on the timezone determined by `utc_offset`. Format is `HH:mm`.
+ - `utc_offset` - (Optional) Used to determine the timezone for cluster maintenance.
+ - `week_index` - (Optional) The week in the month used for the maintenance run. Options are `First`, `Second`, `Third`, `Fourth`, and `Last`.
+
+ ---
+ `not_allowed` block supports the following:
+ - `end` - (Required) The end of a time span, formatted as an RFC3339 string.
+ - `start` - (Required) The start of a time span, formatted as an RFC3339 string.
+EOT
+}
+
+variable "maintenance_window_node_os" {
+  type = object({
+    day_of_month = optional(number)
+    day_of_week  = optional(string)
+    duration     = number
+    frequency    = string
+    interval     = number
+    start_date   = optional(string)
+    start_time   = optional(string)
+    utc_offset   = optional(string)
+    week_index   = optional(string)
+    not_allowed = optional(map(object({
+      end   = string
+      start = string
+    })))
+  })
+  default     = null
+  description = <<-EOT
+ - `day_of_month` - (Optional) The day of the month for the maintenance run. Required in combination with RelativeMonthly frequency. Value between 0 and 31 (inclusive).
+ - `day_of_week` - (Optional) The day of the week for the maintenance run. Options are `Monday`, `Tuesday`, `Wednesday`, `Thurday`, `Friday`, `Saturday` and `Sunday`. Required in combination with weekly frequency.
+ - `duration` - (Required) The duration of the window for maintenance to run in hours.
+ - `frequency` - (Required) Frequency of maintenance. Possible options are `Daily`, `Weekly`, `AbsoluteMonthly` and `RelativeMonthly`.
+ - `interval` - (Required) The interval for maintenance runs. Depending on the frequency this interval is week or month based.
+ - `start_date` - (Optional) The date on which the maintenance window begins to take effect.
+ - `start_time` - (Optional) The time for maintenance to begin, based on the timezone determined by `utc_offset`. Format is `HH:mm`.
+ - `utc_offset` - (Optional) Used to determine the timezone for cluster maintenance.
+ - `week_index` - (Optional) The week in the month used for the maintenance run. Options are `First`, `Second`, `Third`, `Fourth`, and `Last`.
+
+ ---
+ `not_allowed` block supports the following:
+ - `end` - (Required) The end of a time span, formatted as an RFC3339 string.
+ - `start` - (Required) The start of a time span, formatted as an RFC3339 string.
+EOT
+}
+
+
 # Ingress Application Gateway
 variable "ingress_application_gateway_enable" {
   type    = bool
@@ -273,6 +391,21 @@ variable "ingress_application_gateway_name" {
   type    = string
   default = null
 }
+variable "ingress_application_gateway_subnet_id" {
+  type    = string
+  default = null
+}
+
+variable "ingress_application_gateway_subnet_cidr" {
+  type    = string
+  default = null
+}
+
+variable "ingress_application_gateway_id" {
+  type    = string
+  default = null
+}
+
 
 variable "ingress_application_subnet_id" {
   type    = string

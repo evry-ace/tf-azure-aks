@@ -29,7 +29,7 @@ locals {
       os_type         = lookup(p, "os_type", local.default_pool_settings.os_type)
       os_disk_size_gb = lookup(p, "os_disk_size_gb", local.default_pool_settings.os_disk_size_gb)
       os_disk_type    = lookup(p, "os_disk_type", local.default_pool_settings.os_disk_type)
-      vnet_subnet_id  = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, [""]), 0) : var.aks_vnet_subnet_id
+      vnet_subnet_id  = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet[*].id, [""]), 0) : var.aks_vnet_subnet_id
       zones           = lookup(p, "zones", local.default_pool_settings.zones)
 
       mode                = lookup(p, "mode", "User")
@@ -114,15 +114,68 @@ resource "azurerm_subnet" "k8s_agent_subnet" {
 }
 
 resource "azurerm_kubernetes_cluster" "k8s_cluster" {
-  name                            = var.cluster_name
-  location                        = var.resource_group_location
-  resource_group_name             = var.resource_group_name
-  dns_prefix                      = var.dns_prefix
-  private_cluster_enabled         = var.private_cluster_enabled
-  private_dns_zone_id             = var.private_dns_zone_id
-  kubernetes_version              = var.k8s_version
-  api_server_authorized_ip_ranges = var.api_server_authorized_ip_ranges
-  automatic_channel_upgrade       = var.automatic_channel_upgrade
+  name                    = var.cluster_name
+  location                = var.resource_group_location
+  resource_group_name     = var.resource_group_name
+  dns_prefix              = var.dns_prefix
+  private_cluster_enabled = var.private_cluster_enabled
+  private_dns_zone_id     = var.private_dns_zone_id
+  kubernetes_version      = var.k8s_version
+  dynamic "api_server_access_profile" {
+    for_each = length(var.api_server_authorized_ip_ranges) != 0 ? [1] : []
+    content {
+      authorized_ip_ranges = var.api_server_authorized_ip_ranges
+    }
+  }
+  automatic_channel_upgrade = var.automatic_channel_upgrade
+
+  dynamic "maintenance_window_auto_upgrade" {
+    for_each = var.maintenance_window_auto_upgrade == null ? [] : [var.maintenance_window_auto_upgrade]
+    content {
+      duration     = maintenance_window_auto_upgrade.value.duration
+      frequency    = maintenance_window_auto_upgrade.value.frequency
+      interval     = maintenance_window_auto_upgrade.value.interval
+      day_of_month = maintenance_window_auto_upgrade.value.day_of_month
+      day_of_week  = maintenance_window_auto_upgrade.value.day_of_week
+      start_date   = maintenance_window_auto_upgrade.value.start_date
+      start_time   = maintenance_window_auto_upgrade.value.start_time
+      utc_offset   = maintenance_window_auto_upgrade.value.utc_offset
+      week_index   = maintenance_window_auto_upgrade.value.week_index
+
+      dynamic "not_allowed" {
+        for_each = maintenance_window_auto_upgrade.value.not_allowed == null ? {} : maintenance_window_auto_upgrade.value.not_allowed
+        content {
+          end   = not_allowed.value.end
+          start = not_allowed.value.start
+        }
+      }
+    }
+  }
+
+  node_os_channel_upgrade = var.node_os_channel_upgrade
+
+  dynamic "maintenance_window_node_os" {
+    for_each = var.maintenance_window_node_os == null ? [] : [var.maintenance_window_node_os]
+    content {
+      duration     = maintenance_window_node_os.value.duration
+      frequency    = maintenance_window_node_os.value.frequency
+      interval     = maintenance_window_node_os.value.interval
+      day_of_month = maintenance_window_node_os.value.day_of_month
+      day_of_week  = maintenance_window_node_os.value.day_of_week
+      start_date   = maintenance_window_node_os.value.start_date
+      start_time   = maintenance_window_node_os.value.start_time
+      utc_offset   = maintenance_window_node_os.value.utc_offset
+      week_index   = maintenance_window_node_os.value.week_index
+
+      dynamic "not_allowed" {
+        for_each = maintenance_window_node_os.value.not_allowed == null ? {} : maintenance_window_node_os.value.not_allowed
+        content {
+          end   = not_allowed.value.end
+          start = not_allowed.value.start
+        }
+      }
+    }
+  }
 
   linux_profile {
     admin_username = var.admin_username
@@ -135,6 +188,8 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
   oidc_issuer_enabled       = var.oidc_issuer_enabled
   workload_identity_enabled = var.workload_identity_enabled
 
+  role_based_access_control_enabled = true
+
   node_resource_group = var.node_resource_group
 
   #if No aks_vnet_subnet_id is passed THEN use newly created subnet id ELSE use PASSED subnet id
@@ -144,7 +199,7 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     vm_size              = lookup(var.default_pool, "vm_size", local.default_pool_settings.vm_size)
     os_disk_size_gb      = lookup(var.default_pool, "os_disk_size_gb", local.default_pool_settings.os_disk_size_gb)
     os_disk_type         = lookup(var.default_pool, "os_disk_type", local.default_pool_settings.os_disk_type)
-    vnet_subnet_id       = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet.*.id, [""]), 0) : var.aks_vnet_subnet_id
+    vnet_subnet_id       = var.create_vnet ? element(concat(azurerm_subnet.k8s_agent_subnet[*].id, [""]), 0) : var.aks_vnet_subnet_id
     zones                = lookup(var.default_pool, "zones", local.default_pool_settings.zones)
     type                 = lookup(var.default_pool, "type", local.default_pool_settings.default_pool_type)
     enable_auto_scaling  = lookup(var.default_pool, "enable_auto_scaling", true)
@@ -153,6 +208,14 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     tags                 = lookup(var.default_pool, "tags", var.tags)
     max_pods             = lookup(var.default_pool, "max_pods", local.default_pool_settings.max_pods)
     orchestrator_version = lookup(var.default_pool, "k8s_version", local.default_pool_settings.k8s_version)
+
+    dynamic "upgrade_settings" {
+      for_each = var.max_surge == null ? [] : ["upgrade_settings"]
+
+      content {
+        max_surge = var.max_surge
+      }
+    }
   }
 
   dynamic "service_principal" {
@@ -200,10 +263,9 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     network_plugin = var.aks_network_plugin
     network_policy = var.aks_network_policy
 
-    pod_cidr           = var.aks_pod_cidr
-    service_cidr       = var.aks_service_cidr
-    dns_service_ip     = var.aks_dns_service_ip
-    docker_bridge_cidr = var.aks_docker_bridge_cidr
+    pod_cidr       = var.aks_pod_cidr
+    service_cidr   = var.aks_service_cidr
+    dns_service_ip = var.aks_dns_service_ip
 
     dynamic "load_balancer_profile" {
       for_each = var.outbound_type == "loadBalancer" ? [1] : []
@@ -246,6 +308,14 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
     }
   }
 
+  dynamic "microsoft_defender" {
+    for_each = var.msd_enable ? [1] : []
+
+    content {
+      log_analytics_workspace_id = var.msd_workspace_id
+    }
+  }
+
   dynamic "oms_agent" {
     for_each = var.oms_agent_enable ? [1] : []
 
@@ -256,6 +326,21 @@ resource "azurerm_kubernetes_cluster" "k8s_cluster" {
 
 
   tags = var.tags
+
+  #  dynamic "lifecycle" {
+  #    for_each = lookup(var.default_pool, "enable_auto_scaling", true) ? [1] : []
+  #
+  #    content { 
+  #      ignore_changes = [tags,]
+  #    }
+  #  }
+  #  lifecycle {
+  #    ignore_changes = [
+  #      # Ignore changes to default_node_pools node_count , e.g. because it is managed by enable_auto_scaling
+  #      default_node_pool[0].node_count,
+  #    ]
+  #  }
+
 }
 
 resource "azurerm_kubernetes_cluster_node_pool" "aks-node" {
@@ -284,6 +369,21 @@ resource "azurerm_kubernetes_cluster_node_pool" "aks-node" {
   priority        = each.value.priority
   eviction_policy = each.value.eviction_policy
   spot_max_price  = each.value.spot_max_price
+
+  dynamic "upgrade_settings" {
+    for_each = var.max_surge == null || each.value.priority == "Spot" ? [] : ["upgrade_settings"]
+
+    content {
+      max_surge = var.max_surge
+    }
+  }
+
+  lifecycle {
+    ignore_changes = [
+      # Ignore changes to default_node_pools node_count , e.g. because it is managed by enable_auto_scaling
+      node_count,
+    ]
+  }
 }
 
 resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {
@@ -298,11 +398,6 @@ resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {
     content {
       category = log.key
       enabled  = log.value.enabled
-
-      retention_policy {
-        enabled = log.value.retention.enabled
-        days    = log.value.retention.days
-      }
     }
   }
   dynamic "metric" {
@@ -312,11 +407,6 @@ resource "azurerm_monitor_diagnostic_setting" "aks-diagnostics" {
     content {
       category = metric.key
       enabled  = metric.value.enabled
-
-      retention_policy {
-        enabled = metric.value.retention.enabled
-        days    = metric.value.retention.days
-      }
     }
   }
 }
